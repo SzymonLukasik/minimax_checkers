@@ -10,3 +10,10 @@
 3. Go to `react-flask-app` and run `npm install` to install needed dependencies
 4. Start an app by going to `react-flask-app` and then `yarn start` to run `react page` and in new terminal window `yarn start-api` to run `python api`
 
+
+
+### API Endpoints
+
+`5000/move` - returns next move after couple of seconds
+
+`5000/time` - returns unix time from python library
