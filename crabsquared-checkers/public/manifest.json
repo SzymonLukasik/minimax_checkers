@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Crabsquared Checkers",
+  "name": "Crabsquared Checkers",
   "icons": [
     {
       "src": "favicon.ico",

@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import './style/App.css';
+import './App.css';
+
+import Game from './components/Game/Game';
+import Title from './components/Title/Title';
 
 function App() {
+  /*
   const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
@@ -9,15 +13,12 @@ function App() {
       setCurrentTime(data.time);
     });
   }, []);
+  */
 
   return (
-    <div className="App">        
-        <p>
-          🦀 CrabSquared Rulez 🦀
-        </p>
-        <p>
-          The current time is {currentTime}.
-        </p>
+    <div className="App">
+      <Title />        
+      <Game />
     </div>
   );
   
