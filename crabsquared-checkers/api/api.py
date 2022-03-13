@@ -1,9 +1,10 @@
 import time
 from time import sleep
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
 
-@app.route('/time')
-def get_test_value():
-    return {'time': time.time()}
+@app.route('/test', methods=['POST'])
+def get_test_variable():
+    var = request.json['var']
+    return {'var': var + 1}
