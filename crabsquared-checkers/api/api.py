@@ -1,6 +1,3 @@
-from crypt import methods
-import time
-from time import sleep
 from flask import Flask, request
 
 app = Flask(__name__)
