@@ -5,13 +5,25 @@ function App() {
   const [testVar, setTestVar] = useState(0);
 
   useEffect(() => {
-    fetch('/test', {
+    fetch('/available_moves', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({'var': 7})
+      body: JSON.stringify({
+        'type': 'board',
+        'state': [
+          ['b', '.', 'b', '.', 'b', '.', 'b', '.'],
+          ['.', '.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.', '.'],
+          ['.', '.', '.', '.', '.', '.', '.', '.'],
+          ['.', 'c', '.', 'c', '.', 'c', '.', 'c']
+        ]
+      })
     })
     .then(res => res.json())
-    .then(data => { setTestVar(data.var); });
+    .then(data => { setTestVar(data); });
   }, []);
 
   return (
@@ -20,7 +32,7 @@ function App() {
           🦀 CrabSquared Rulez 🦀
         </p>
         <p>
-          7 + 1 = {testVar}
+          {testVar.type}
         </p>
     </div>
   );
