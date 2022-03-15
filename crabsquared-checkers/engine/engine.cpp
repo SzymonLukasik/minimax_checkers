@@ -2,10 +2,21 @@
 #include <cmath>
 #include <vector>
 
+
+inline int reindex2to1(pos_t pos_h, pos_t pos_w){
+    return BOARD_WIDTH*pos_h + pos_w;
+}
+
+inline bool are_oposing_colors(piece_color_t color1, piece_color_t color2){
+    return  color1 != N && color2 != N
+            && color1 != O && color2 != O
+            && color1 != color2;
+}
+
 /*
     Returns true iff pos is in board bounds.
 */
-bool in_board(int pos_h, int pos_w){
+inline bool in_board(pos_t pos_h, pos_t pos_w){
     return pos_h >= 0 && pos_h < BOARD_HEIGHT
             && pos_w >= 0 && pos_w < BOARD_WIDTH;
 }
@@ -13,16 +24,26 @@ bool in_board(int pos_h, int pos_w){
 /*
     Converts pos to sqare name.
 */
-std::string square_name(int pos_h, int pos_w){
-    char row = char(pos_h) + '1';
-    char col = char(pos_w) + 'A';
-    return {col, row};
+inline std::string square_name(pos_t pos_h, pos_t pos_w){
+    return {char(pos_w + char('A')), char(pos_h + char('1'))};
+}
+
+std::list<pos_t> get_dirs_h(piece_t piece){
+    std::list<pos_t> dirs_h;
+    if(piece == BK || piece == WK){
+        dirs_h = {-1,1};
+    } else if(piece == BP){
+        dirs_h = {-1};
+    } else {
+        dirs_h = {1};
+    }
+    return dirs_h;
 }
 
 /*
     Returns color of a pice at given pos.
 */
-piece_color_t piece_color(board_t const& board, int pos_h, int pos_w){
+piece_color_t piece_color(board_t const& board, pos_t pos_h, pos_t pos_w){
     if(!in_board(pos_h, pos_w))
         return O;
     piece_t piece = board[pos_h][pos_w];
@@ -37,27 +58,29 @@ piece_color_t piece_color(board_t const& board, int pos_h, int pos_w){
     Return a map of valid moves for given board and player color.
 */
 move_list_t square_valid_moves(board_t const& board,
-                                int pos_h, int pos_w,
+                                pos_t pos_h, pos_t pos_w,
                                 piece_color_t color,
                                 bool& capture_possible);
-void filter_non_capture_moves(valid_moves_t& moves);
+valid_moves_t filter_non_capture_moves(valid_moves_t const& moves);
 valid_moves_t valid_moves(board_t const& board, piece_color_t color){
     valid_moves_t ret;
     bool capture_possible = false;
-    for(int pos_h = 0; pos_h < BOARD_HEIGHT; pos_h++){
-        for(int pos_w = 0; pos_w < BOARD_WIDTH; pos_w++){
-            bool capture_possible_tmp;
-            ret[square_name(pos_h, pos_w)] =
-                square_valid_moves(board,
-                                    pos_h, pos_w,
-                                    color,
-                                    capture_possible_tmp);
+    for(pos_t pos_h = 0; pos_h < BOARD_HEIGHT; pos_h++){
+        for(pos_t pos_w = pos_h%2; pos_w < BOARD_WIDTH; pos_w+=2){
+            bool capture_possible_tmp = false;
+            move_list_t square_move_list = square_valid_moves(board,
+                                                        pos_h, pos_w,
+                                                        color,
+                                                        capture_possible_tmp);
+            if(!square_move_list.empty())
+                ret[square_name(pos_h, pos_w)] = square_move_list;
+
             capture_possible |= capture_possible_tmp;
         }
     }
-    if(capture_possible){
-        filter_non_capture_moves(ret);
-    }
+    if(capture_possible)
+        ret = filter_non_capture_moves(ret);
+
     return ret;
 }
 
@@ -67,13 +90,12 @@ valid_moves_t valid_moves(board_t const& board, piece_color_t color){
     is possible at given square.
 */
 move_list_t list_non_capture_moves(board_t const & board,
-                                int pos_h, int pos_w);
+                                pos_t pos_h, pos_t pos_w);
 move_list_t list_capture_moves(board_t const & board,
-                                int pos_h, int pos_w,
-                                piece_color_t color,
+                                pos_t pos_h, pos_t pos_w,
                                 bool& capture_possible);
 move_list_t square_valid_moves(board_t const& board,
-                                int pos_h, int pos_w,
+                                pos_t pos_h, pos_t pos_w,
                                 piece_color_t color,
                                 bool& capture_possible){
     move_list_t ret;
@@ -81,7 +103,7 @@ move_list_t square_valid_moves(board_t const& board,
         return ret;
     
     auto non_capture_moves = list_non_capture_moves(board, pos_h, pos_w);
-    auto capture_moves = list_capture_moves(board, pos_h, pos_w, color, capture_possible);
+    auto capture_moves = list_capture_moves(board, pos_h, pos_w, capture_possible);
     ret.insert(ret.end(), capture_moves.begin(), capture_moves.end());
     ret.insert(ret.end(), non_capture_moves.begin(), non_capture_moves.end());
     return ret;
@@ -91,22 +113,14 @@ move_list_t square_valid_moves(board_t const& board,
     Returns a list of legal non capture moves for given board, player color and square.
 */
 move_list_t list_non_capture_moves(board_t const & board,
-                                int pos_h, int pos_w){
+                                pos_t pos_h, pos_t pos_w){
     move_list_t ret;
-    std::list<int> dirs_h;
-    piece_t piece = board[pos_h][pos_w];
-    if(piece == BK || piece == WK){
-        dirs_h = {-1,1};
-    } else if(piece == BP){
-        dirs_h = {-1};
-    } else {
-        dirs_h = {1};
-    }
-    int dirs_w[2] = {-1, 1};
-    for(int dir_h : dirs_h){
-        for(int dir_w : dirs_w){
-            int cur_h = pos_h+dir_h;
-            int cur_w = pos_w+dir_w;
+    std::list<pos_t> dirs_h = get_dirs_h(board[pos_h][pos_w]);
+    pos_t dirs_w[2] = {-1, 1};
+    for(pos_t dir_h : dirs_h){
+        for(pos_t dir_w : dirs_w){
+            pos_t cur_h = pos_h+dir_h;
+            pos_t cur_w = pos_w+dir_w;
             if(piece_color(board, cur_h, cur_w) == N)
                 ret.push_back(
                     {square_name(pos_h, pos_w),
@@ -116,41 +130,56 @@ move_list_t list_non_capture_moves(board_t const & board,
     return ret;
 }
 
+/*
+    Returns a list of legal capture moves for given board, player color and square.
+    Sets flag 'capture_possible' to 'true' iff a move which is a capture
+    is possible at given square.
+*/
 move_list_t list_capture_moves_helper(board_t const & board,
-                            int pos_h, int pos_w,
+                            pos_t pos_h, pos_t pos_w,
                             piece_color_t color, piece_t piece,
                             bool& capture_possible,
-                            std::vector<std::vector<bool>>& captured,
-                            int ignore_pos_h, int ignore_pos_w){
+                            bool* captured,
+                            pos_t ignore_pos_h, pos_t ignore_pos_w);
+move_list_t filter_helper_artefact_moves(move_list_t const& move_list);
+move_list_t list_capture_moves(board_t const & board,
+                            pos_t pos_h, pos_t pos_w,
+                            bool& capture_possible){
+    bool captured[BOARD_HEIGHT * BOARD_WIDTH];
+    piece_color_t color = piece_color(board, pos_h, pos_w);
+    piece_t piece = board[pos_h][pos_w];
+    move_list_t ret_tmp =
+        list_capture_moves_helper(board, pos_h, pos_w, color, piece, capture_possible, captured, pos_h, pos_w);
+    
+    return filter_helper_artefact_moves(ret_tmp);
+}
+
+move_list_t list_capture_moves_helper(board_t const & board,
+                            pos_t pos_h, pos_t pos_w,
+                            piece_color_t color, piece_t piece,
+                            bool& capture_possible,
+                            bool* captured,
+                            pos_t ignore_pos_h, pos_t ignore_pos_w){
     move_list_t ret;
-    std::list<int> dirs_h;
-    if(piece == BK || piece == WK){
-        dirs_h = {-1,1};
-    } else if(piece == BP){
-        dirs_h = {-1};
-    } else {
-        dirs_h = {1};
-    }
-    int dirs_w[2] = {-1, 1};
-    for(int dir_h : dirs_h){
-        for(int dir_w : dirs_w){
-            int fst_h = pos_h+dir_h;
-            int fst_w = pos_w+dir_w;
+    std::list<pos_t> dirs_h = get_dirs_h(piece);
+    pos_t dirs_w[2] = {-1, 1};
+    for(pos_t dir_h : dirs_h){
+        for(pos_t dir_w : dirs_w){
+            pos_t fst_h = pos_h+dir_h;
+            pos_t fst_w = pos_w+dir_w;
             piece_color_t fst_neigh_color = piece_color(board, fst_h, fst_w);
-            if(fst_neigh_color != N
-            && fst_neigh_color != O
-            && fst_neigh_color != color
-            && !captured[fst_h][fst_w]){
-                int snd_h = fst_h + dir_h;
-                int snd_w = fst_w + dir_w;
+            if(are_oposing_colors(color, fst_neigh_color)
+            && !captured[reindex2to1(fst_h, fst_w)]){
+                pos_t snd_h = fst_h + dir_h;
+                pos_t snd_w = fst_w + dir_w;
                 piece_color_t snd_neigh_color = piece_color(board, snd_h, snd_w);
                 if(snd_neigh_color == N
                 || (snd_h == ignore_pos_h && snd_w == ignore_pos_w)){
-                    captured[fst_h][fst_w] = true;
+                    captured[reindex2to1(fst_h, fst_w)] = true;
                     move_list_t ret_tmp;
                     ret_tmp = list_capture_moves_helper(board, snd_h, snd_w, color, piece, capture_possible, captured, ignore_pos_h, ignore_pos_w);
                     capture_possible = true;
-                    captured[fst_h][fst_w] = false;
+                    captured[reindex2to1(fst_h, fst_w)] = false;
                     
                     for(auto& move : ret_tmp){
                         move.insert(move.begin(), {square_name(pos_h, pos_w)});
@@ -165,20 +194,9 @@ move_list_t list_capture_moves_helper(board_t const & board,
     return ret;
 }
 
-/*
-    Returns a list of legal capture moves for given board, player color and square.
-    Sets flag 'capture_possible' to 'true' iff a move which is a capture
-    is possible at given square.
-*/
-move_list_t list_capture_moves(board_t const & board,
-                            int pos_h, int pos_w,
-                            piece_color_t color,
-                            bool& capture_possible){
-    std::vector<std::vector<bool>> captured(BOARD_HEIGHT, std::vector<bool>(BOARD_WIDTH, false));
-    move_list_t ret_tmp =
-        list_capture_moves_helper(board, pos_h, pos_w, color, board[pos_h][pos_w], capture_possible, captured, pos_h, pos_w);
+move_list_t filter_helper_artefact_moves(move_list_t const& move_list){
     move_list_t ret;
-    for(auto move : ret_tmp){
+    for(auto move : move_list){
         if(move.size() > 1)
             ret.push_back(move);
     }
@@ -206,10 +224,14 @@ move_list_t filter_square_non_capture_moves(move_list_t const& moves){
 /*
     Filters moves so that only capture moves remain.
 */
-void filter_non_capture_moves(valid_moves_t& moves){
+valid_moves_t filter_non_capture_moves(valid_moves_t const& moves){
+    valid_moves_t ret;
     for(auto& square_moves : moves){
-        square_moves.second = filter_square_non_capture_moves(square_moves.second);
+        move_list_t square_move_list = filter_square_non_capture_moves(square_moves.second);
+        if(!square_move_list.empty())
+            ret[square_moves.first] = square_move_list;
     }
+    return ret;
 }
 
 
@@ -244,6 +266,7 @@ std::ostream& operator <<(std::ostream& os, valid_moves_t vm){
     return os;
 }
 
+
 board_t board1 = {
     {WP, NP, WP, NP, WP, NP, WP, NP},
     {NP, WP, NP, WP, NP, WP, NP, WP},
@@ -268,7 +291,7 @@ board_t board2 = {
 
 
 int main(){
-    std::cout<<valid_moves(board1, W);
+    std::cout<<valid_moves(board2, W);
     
     return 0;
 }

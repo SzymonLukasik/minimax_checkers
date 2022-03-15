@@ -24,6 +24,8 @@ enum piece_color_t {B, W, N, O};
 
 const int BOARD_WIDTH = 8;
 const int BOARD_HEIGHT = 8;
+using pos_t = int_fast8_t;
+
 
 using board_t = piece_t[BOARD_HEIGHT][BOARD_WIDTH];
 
