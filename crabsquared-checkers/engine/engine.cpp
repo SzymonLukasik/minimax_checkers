@@ -79,7 +79,7 @@ valid_moves_t valid_moves(board_t const& board, piece_color_t color){
         }
     }
     if(capture_possible)
-        ret = filter_non_capture_moves(ret);
+        return filter_non_capture_moves(ret);
 
     return ret;
 }
