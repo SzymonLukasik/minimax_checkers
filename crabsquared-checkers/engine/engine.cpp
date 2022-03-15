@@ -43,19 +43,19 @@ move_list_t square_valid_moves(board_t const& board,
 void filter_non_capture_moves(valid_moves_t& moves);
 valid_moves_t valid_moves(board_t const& board, piece_color_t color){
     valid_moves_t ret;
-    bool capture_ocurred = false;
+    bool capture_possible = false;
     for(int pos_h = 0; pos_h < BOARD_HEIGHT; pos_h++){
         for(int pos_w = 0; pos_w < BOARD_WIDTH; pos_w++){
-            bool capture_ocurred_tmp;
+            bool capture_possible_tmp;
             ret[square_name(pos_h, pos_w)] =
                 square_valid_moves(board,
                                     pos_h, pos_w,
                                     color,
-                                    capture_ocurred_tmp);
-            capture_ocurred |= capture_ocurred_tmp;
+                                    capture_possible_tmp);
+            capture_possible |= capture_possible_tmp;
         }
     }
-    if(capture_ocurred){
+    if(capture_possible){
         filter_non_capture_moves(ret);
     }
     return ret;
