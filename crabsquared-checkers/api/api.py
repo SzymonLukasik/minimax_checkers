@@ -2,6 +2,12 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
+@app.route('/')
+def api_base():
+    return {
+        'type': 'api_base',
+        'available_requests': ['/', '/available_moves', '/bot_move']
+    }
 
 @app.route('/available_moves', methods=['POST'])
 def get_avaliable_moves():
