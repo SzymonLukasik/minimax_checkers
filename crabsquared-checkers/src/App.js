@@ -32,7 +32,7 @@ function App() {
           🦀 CrabSquared Rulez 🦀
         </p>
         <p>
-          {testVar.type}
+          {JSON.stringify(testVar, null, 2)}
         </p>
     </div>
   );
