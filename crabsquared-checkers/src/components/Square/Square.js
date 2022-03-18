@@ -13,7 +13,7 @@ class Square extends React.Component {
     render() {
         return (
             <button className={this.state.playable === true ? 'square-playable' : 'square-idle'} 
-                    onClick={() => this.props.onClick} >
+                    onClick={this.props.onClick} >
                 <div>
                     {this.state.piece === 'b' ? '🦀' : ''}
                     {this.state.piece === 'c' ? '🕷️' : ''}
