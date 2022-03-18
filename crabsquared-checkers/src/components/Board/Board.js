@@ -6,9 +6,11 @@ import Square from '../Square/Square';
 class Board extends React.Component {
     renderRow(i) {
         return (
-            <div className="board-row">
+            <div className="board-row" key={i}>
                 {this.props.board[i].map((el, index) => (
-                    <Square value={el} x={i} y={index} onClick={() => this.props.handleClick(i, index)} />
+                   <Square value={el} x={i} y={index} 
+                           onClick={() => this.props.handleClick(i, index)}
+                           key={i + index}/>
                 ))}
             </div>
         );
