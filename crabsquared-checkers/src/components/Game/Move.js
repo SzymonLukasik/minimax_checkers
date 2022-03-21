@@ -1,5 +1,6 @@
 import { PathsLoader } from "./PathsLoader";
 import { Position } from "./Position";
+import { cloneDeep } from "lodash";
 
 /**
  * Class enabling control over move of a single piece. 
@@ -7,8 +8,9 @@ import { Position } from "./Position";
 export default class Move {
     constructor(game) {
         this.pathsLoader = new PathsLoader(game);
-        this.startPos = this.currPos = null;
+        this.chosenPiece = null
         this.availablePaths = [];
+        this.pathTravelled = [];
     }
 
     /**
@@ -16,8 +18,9 @@ export default class Move {
      * @param {*} position - clicked position
      */
     choosePiece(position) {
-        this.startPos = this.currPos = position;
+        this.chosenPiece = position;
         this.availablePaths = this.pathsLoader.getAvailablePaths(position);
+        this.pathTravelled = []
     }
 
     /**
@@ -25,8 +28,9 @@ export default class Move {
      * @param {*} state - state of a game.
      */
     loadState(state) {
-        this.startPos = this.currPos = state.chosenPiece;
+        this.chosenPiece = state.chosenPiece;
         this.availablePaths = state.availablePaths;
+        this.pathTravelled = state.pathTravelled;
     }
 
     /**
@@ -42,15 +46,37 @@ export default class Move {
      * Returns flattened list of available paths, i.e. list of arrays of form [x, y].
      */
     availableSquares() {
-        return this.availablePaths ? this.availablePaths.flat() : null;
+        return this.availablePaths ? this.availablePaths.flat() : [];
+    }
+
+    /**
+     * Returns path travelled by currently chosen piece.
+     */
+    getPathTravelled() {
+        return this.pathTravelled;
     }
 
     /**
      * Returns whether a move is in progress.
-     * Move is in progress when current position and starting position are the same.(possibly null)
+     * Move is in progress when path travelled is not empty.
      */
     inProgress() {
-        return !Position.areEqual(this.currPos, this.startPos);
+        return this.pathTravelled.length > 0;
+    }
+
+    /**
+     * If exists, returns position of a piece captured by a jump.
+     * Otherwise return null;
+     * @param {*} oldPos - old position of a chosen piece
+     * @param {*} newPos - new position of a chosen piece
+     */
+    getCaptured(oldPos, newPos) {
+        var axisDist = oldPos.axisDist(newPos);
+        return (
+            axisDist.x === 2 && axisDist.y === 2
+            ? oldPos.middle(newPos)
+            : null
+        );
     }
 
     /**
@@ -59,19 +85,21 @@ export default class Move {
      * @returns If any piece was captured, its position. Otherwise null.
      */
     jumpOn(newPos) {
-        var oldPos = this.currPos;
-        var axisDist = oldPos.axisDist(newPos);
-        var captured = axisDist.x === 2 && axisDist.y === 2 ? oldPos.middle(newPos) : null;
+        var oldPos = this.chosenPiece;
+        var captured = this.getCaptured(oldPos, newPos);
         
-        this.currPos = newPos;
+        this.chosenPiece = newPos;
         this.availablePaths = this.availablePaths
             .filter(([first, ..._]) => newPos.isEqual(first))
             .map(([_, ...rest]) => [...rest]);
+        this.pathTravelled.push(oldPos);
 
         if (this.availablePaths.every((move) => move.length === 0)) {
-            this.startPos = this.currPos = null;
+            this.chosenPiece = null;
             this.availablePaths = [];
+            this.pathTravelled = [];
         }
+
         return captured;
     }
     

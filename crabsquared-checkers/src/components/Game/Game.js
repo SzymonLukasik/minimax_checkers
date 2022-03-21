@@ -20,11 +20,17 @@ export default class Game extends React.Component {
                 ['b','-','b','-','b','-','b','-'],
                 ['-','b','-','b','-','b','-','b']
             ],
+            
             activePlayer: 'b',
+
             /** Position of a piece to be moved. */
             chosenPiece: null,
+
             /** List of paths that describes possible moves for a chosen piece. */
-            availablePaths: null
+            availablePaths: null,
+
+            /** Path of squares travelled by currently chosenPiece */
+            pathTravelled: []
         }
         this.handleSquareClick = this.handleSquareClick.bind(this);
         this.handleUndoClick = this.handleUndoClick.bind(this);
@@ -87,7 +93,7 @@ export default class Game extends React.Component {
                 return {
                     board: state.board.map(
                         (row, i) => row.map((el, j) =>
-                            (this.state.chosenPiece.isEqual([i, j]) || Position.areEqual(captured, [i, j]))  
+                            (state.chosenPiece.isEqual([i, j]) || Position.areEqual(captured, [i, j]))  
                             ? '-'
                             : position.isEqual([i, j]) 
                             ? state.activePlayer
@@ -95,7 +101,8 @@ export default class Game extends React.Component {
                     activePlayer: this.move.inProgress() ? state.activePlayer : this.getOpponent(),
                     count: state.count + 1,
                     chosenPiece:  this.move.inProgress() ? position : null,
-                    availablePaths: this.move.getAvailablePaths()
+                    availablePaths: this.move.getAvailablePaths(),
+                    pathTravelled: this.move.getPathTravelled()
                 }
             });
         }
@@ -124,10 +131,7 @@ export default class Game extends React.Component {
         if (this.history.length > 0) {
             var previousState = this.history.pop();
             this.move.loadState(previousState);
-            this.setState(
-                previousState,
-                () =>this.move.choosePiece(previousState.chosenPiece)
-            );
+            this.setState(previousState);
         }
     }
 
@@ -136,7 +140,8 @@ export default class Game extends React.Component {
             <Board board={this.state.board}
                    handleClick={this.handleSquareClick}
                    chosenPiece={this.state.chosenPiece}
-                   availableSquares={this.move.availableSquares()}/>
+                   availableSquares={this.move.availableSquares()}
+                   pathTravelled={this.move.getPathTravelled()}/>
         );
     }
 

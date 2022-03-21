@@ -12,7 +12,11 @@ class Square extends React.Component {
                 : (
                     (this.props.available === true)
                     ? 'square-available'
-                    : 'square-playable'
+                    : (
+                        (this.props.travelled === true)
+                        ? 'square-travelled'
+                        : 'square-playable'
+                    )
                 )
             )
             : 'square-idle'

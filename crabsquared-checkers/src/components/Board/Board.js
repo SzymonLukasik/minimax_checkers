@@ -6,21 +6,15 @@ import { Position } from '../Game/Position';
 
 class Board extends React.Component {
     
-    isSquareAvailable(i, j) {
-        return (
-            this.props.availableSquares
-            && this.props.availableSquares.some((pos) =>  Position.areEqual(pos, [i, j]))
-        );
-    }
-
     renderRow(row, i) {
         return (
             <div className="board-row" key={i}>
                 {row.map((el, j) => (
                    <Square value={el} position={new Position(i, j)}
                            chosen={Position.areEqual(this.props.chosenPiece, [i, j])}
-                           available={this.isSquareAvailable(i, j)}
+                           available={this.props.availableSquares.some((pos) =>  Position.areEqual(pos, [i, j]))}
                            onClick={this.props.handleClick}
+                           travelled={this.props.pathTravelled.some((pos) => Position.areEqual(pos, [i, j]))}
                            key={j}/>
                 ))}
             </div>

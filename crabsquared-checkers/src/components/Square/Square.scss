@@ -17,20 +17,26 @@
     background: rgb(231, 198, 203);
 }
 
-.square-chosen {
-    @extend .square-playable;
-    background: rgb(2, 185, 231)
-}
-
 .square-idle {
     @extend .square;
     background: #fff;
 }
 
+.square-chosen {
+    @extend .square-playable;
+    background: rgb(2, 185, 231)
+}
+
 .square-available {
-    @extend .square-idle;
+    @extend .square-playable;
     background: rgb(8, 235, 235);
 }
+
+.square-travelled {
+    @extend .square-playable;
+    background: rgb(236, 107, 150);
+}
+
 .square:focus {
     outline: none;
 }
