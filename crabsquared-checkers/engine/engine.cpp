@@ -67,6 +67,19 @@ std::ostream &operator<<(std::ostream &os, board_moves_t vm)
     return os;
 }
 
+std::ostream &operator<<(std::ostream &os, board_t board)
+{
+    for (int i = 0; i < BOARD_HEIGHT; i++)
+    {
+        for (int j = 0; j < BOARD_WIDTH; j++)
+        {
+            os << board[i][j];
+        }
+        os << "\n";
+    }
+    return os;
+}
+
 /// IMPLEMENTATION
 
 /*

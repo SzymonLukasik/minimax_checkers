@@ -1,10 +1,9 @@
+#ifndef ENGINE_H
+#define ENGINE_H
+
 #include <list>
 #include <map>
-
-/*
-    Eg: formated_square_t sq = "A4"
-*/
-using formated_square_t = std::string;
+#include <vector>
 
 /*
     BP - black pawn
@@ -42,14 +41,14 @@ const int N_SQUARES = BOARD_WIDTH * BOARD_HEIGHT;
 /*
     Number describing single coordinate on a board.
 */
-using pos_t = int_fast8_t;
+using pos_t = int;
 using square_t = std::pair<pos_t, pos_t>;
 
-using board_t = piece_t[BOARD_HEIGHT][BOARD_WIDTH];
+using board_t = std::vector<std::vector<piece_t>>;
 
 /*
     A list of squares to visit in order to make a valid move.
-    
+
     Eg: move_t mv1 = ["A3", "B4"]
         move_t mv2 = ["A3", "C5", "E7"]
 */
@@ -71,3 +70,5 @@ using square_moves_t = std::list<move_t>;
 using board_moves_t = std::map<square_t, square_moves_t>;
 
 board_moves_t valid_moves(board_t const &board, piece_color_t color);
+
+#endif
