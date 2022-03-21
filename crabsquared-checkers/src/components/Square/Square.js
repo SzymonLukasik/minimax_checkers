@@ -1,22 +1,36 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import './Square.scss';
 
 class Square extends React.Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            piece: this.props.value === '-' ? '' : this.props.value,
-            playable: ((this.props.x + this.props.y) % 2 === 0) ? true : false,
-        }
+
+    getClassName() {
+        return (
+            (this.props.position.playable() === true)
+            ? (
+                (this.props.chosen === true)
+                ? 'square-chosen'
+                : (
+                    (this.props.available === true)
+                    ? 'square-available'
+                    : 'square-playable'
+                )
+            )
+            : 'square-idle'
+        );
     }
 
     render() {
         return (
-            <button className={this.state.playable === true ? 'square-playable' : 'square-idle'} 
-                    onClick={this.props.onClick} >
+            <button className={this.getClassName()} 
+                    onClick={() => this.props.onClick(this.props.position)}>
                 <div>
-                    {this.state.piece === 'b' ? '🦀' : ''}
-                    {this.state.piece === 'c' ? '🕷️' : ''}
+                    {
+                        (this.props.value === 'b')
+                        ? '🦀'
+                        : (this.props.value === 'c')
+                        ? '🕷️' 
+                        : ''
+                    }
                 </div>
 
             </button>

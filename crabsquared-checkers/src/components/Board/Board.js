@@ -1,16 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import './Board.css';
 
 import Square from '../Square/Square';
+import { Position } from '../Game/Position';
 
 class Board extends React.Component {
-    renderRow(i) {
+    
+    isSquareAvailable(i, j) {
+        return (
+            this.props.availableSquares
+            && this.props.availableSquares.some((pos) =>  Position.areEqual(pos, [i, j]))
+        );
+    }
+
+    renderRow(row, i) {
         return (
             <div className="board-row" key={i}>
-                {this.props.board[i].map((el, index) => (
-                   <Square value={el} x={i} y={index} 
-                           onClick={() => this.props.handleClick(i, index)}
-                           key={i + index}/>
+                {row.map((el, j) => (
+                   <Square value={el} position={new Position(i, j)}
+                           chosen={Position.areEqual(this.props.chosenPiece, [i, j])}
+                           available={this.isSquareAvailable(i, j)}
+                           onClick={this.props.handleClick}
+                           key={j}/>
                 ))}
             </div>
         );
@@ -19,9 +30,7 @@ class Board extends React.Component {
     renderBoard() {
         return (
             <div className="board-row">
-                {this.props.board.map((el, index) => (
-                    this.renderRow(index)
-                ))}
+                {this.props.board.map((row, i) => (this.renderRow(row, i)))}
             </div>
         );
     }
@@ -29,9 +38,8 @@ class Board extends React.Component {
     render() {
         return (
             <div className="board">
-                
                 <div>
-                {this.renderBoard()}
+                    {this.renderBoard()}
                 </div>
             </div>
         );
