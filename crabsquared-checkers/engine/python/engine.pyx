@@ -10,11 +10,32 @@ chtoenum = {
     '.': 4,
 }
 
-def valid_moves(char_board, color):
+def char_to_engine_board(char_board):
     cdef board_t board
     board = board_t(BOARD_HEIGHT, vector[piece_t](BOARD_WIDTH))
     for i, row in enumerate(char_board):
         for j, sq in enumerate(row):
             board[i][j] = chtoenum[sq]
-    
-    return valid_moves_c(board, color)
+
+    return board
+
+def pair_to_str(p):
+    row, col = p
+    row_char = chr(ord('1')+row)
+    col_char = chr(ord('A')+col)
+    return col_char + row_char
+
+def engine_to_char_moves(engine_moves):
+    return {
+        pair_to_str(sq) : [
+            [pair_to_str(mv_sq) for mv_sq in move]
+            for move in moves
+        ]
+            for sq, moves in engine_moves.items()
+    }
+
+def valid_moves(char_board, color):
+    board = char_to_engine_board(char_board)
+    engine_moves = valid_moves_c(board, color)
+    char_moves = engine_to_char_moves(engine_moves)
+    return char_moves
