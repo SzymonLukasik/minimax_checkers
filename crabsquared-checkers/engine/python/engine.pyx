@@ -11,13 +11,10 @@ chtoenum = {
 }
 
 def char_to_engine_board(char_board):
-    cdef board_t board
-    board = board_t(BOARD_HEIGHT, vector[piece_t](BOARD_WIDTH))
-    for i, row in enumerate(char_board):
-        for j, sq in enumerate(row):
-            board[i][j] = chtoenum[sq]
-
-    return board
+    return [
+        [chtoenum[sq] for sq in row]
+        for row in char_board
+    ]
 
 def pair_to_str(p):
     row, col = p

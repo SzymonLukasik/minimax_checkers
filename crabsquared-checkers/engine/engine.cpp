@@ -7,8 +7,15 @@
 /// TESTS
 
 #include <iostream>
-
-std::string sqtostr(square_t sq);
+/*
+    Converts pos to sqare name.
+    Eg: (1,2) -> "C2"
+        (3,5) -> "F4"
+*/
+inline std::string sqtostr(square_t sq)
+{
+    return {char(sq.second + char('A')), char(sq.first + char('1'))};
+}
 
 board_t board1 = {
     {WP, NP, WP, NP, WP, NP, WP, NP},
@@ -122,17 +129,7 @@ inline bool in_board(square_t sq)
 }
 
 /*
-    Converts pos to sqare name.
-    Eg: (1,2) -> "C2"
-        (3,5) -> "F4"
-*/
-inline std::string sqtostr(square_t sq)
-{
-    return {char(sq.second + char('A')), char(sq.first + char('1'))};
-}
-
-/*
-    Return list of directions in which given piece can be pushed.
+    Returns list of directions in which given piece can be pushed.
     Ignores board bounds.
 */
 std::list<dir_t> piece_dirs(piece_t piece)
@@ -185,9 +182,6 @@ piece_t get_piece(board_t const &board, square_t sq)
     return board[sq.first][sq.second];
 }
 
-/*
-    Return a map of valid moves for given board and player color.
-*/
 square_moves_t square_valid_moves(board_t const &board,
                                   square_t sq,
                                   piece_color_t color,
@@ -219,16 +213,16 @@ board_moves_t valid_moves(board_t const &board, piece_color_t color)
     return ret;
 }
 
-/*
-    Returns a list of legal moves for given board, player color and square.
-    Sets flag 'capture_possible' to 'true' iff a move which is a capture
-    is possible at given square.
-*/
 square_moves_t square_non_capture_moves(board_t const &board,
                                         square_t sq);
 square_moves_t square_capture_moves(board_t const &board,
                                     square_t sq,
                                     bool &capture_possible);
+/*
+    Returns a list of legal moves for given board, player color and square.
+    Sets flag 'capture_possible' to 'true' iff a move which is a capture
+    is possible at given square.
+*/
 square_moves_t square_valid_moves(board_t const &board,
                                   square_t sq,
                                   piece_color_t color,
@@ -260,16 +254,16 @@ square_moves_t square_non_capture_moves(board_t const &board,
     return ret;
 }
 
-/*
-    Returns a list of legal capture moves for given board, player color and square.
-    Sets flag 'capture_possible' to 'true' iff a move which is a capture
-    is possible at given square.
-*/
 square_moves_t square_capture_moves_helper(board_t const &board,
                                            square_t sq,
                                            bool &capture_possible,
                                            std::bitset<N_SQUARES> &captured,
                                            square_t start_sq);
+/*
+    Returns a list of legal capture moves for given board, player color and square.
+    Sets flag 'capture_possible' to 'true' iff a move which is a capture
+    is possible at given square.
+*/
 square_moves_t square_capture_moves(board_t const &board,
                                     square_t sq,
                                     bool &capture_possible)
@@ -277,6 +271,7 @@ square_moves_t square_capture_moves(board_t const &board,
     std::bitset<N_SQUARES> captured;
     square_moves_t ret_tmp =
         square_capture_moves_helper(board, sq, capture_possible, captured, sq);
+    // Erase artefact moves created by helper function.
     ret_tmp.erase(
         std::remove_if(ret_tmp.begin(), ret_tmp.end(), [](move_t mv)
                        { return mv.size() <= 1; }),
@@ -322,15 +317,15 @@ square_moves_t square_capture_moves_helper(board_t const &board,
 
                 // Prepend 'sq' to obtained capturing sequence.
                 for (auto &move : ret_tmp)
-                    move.insert(move.begin(), sq);
+                    move.push_front(sq);
 
-                // Append the updated move to 'ret'.
+                // Append updated moves to 'ret'.
                 ret.insert(ret.end(), ret_tmp.begin(), ret_tmp.end());
             }
         }
     }
     // If no capture is possible from 'sq' then return
-    // list {{sq}} as a base case for recurrence.
+    // list {{sq}} as a base case for recursion.
     if (ret.empty())
         return {{sq}};
 

@@ -42,6 +42,7 @@ const int N_SQUARES = BOARD_WIDTH * BOARD_HEIGHT;
     Number describing single coordinate on a board.
 */
 using pos_t = int;
+
 using square_t = std::pair<pos_t, pos_t>;
 
 using board_t = std::vector<std::vector<piece_t>>;
@@ -69,6 +70,9 @@ using square_moves_t = std::list<move_t>;
 */
 using board_moves_t = std::map<square_t, square_moves_t>;
 
+/*
+    Return a map of valid moves for given board and player color.
+*/
 board_moves_t valid_moves(board_t const &board, piece_color_t color);
 
 #endif
