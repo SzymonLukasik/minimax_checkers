@@ -34,17 +34,28 @@ enum piece_color_t
     N,
 };
 
-const int BOARD_WIDTH = 8;
-const int BOARD_HEIGHT = 8;
-const int N_SQUARES = BOARD_WIDTH * BOARD_HEIGHT;
-
 /*
     Number describing single coordinate on a board.
 */
 using pos_t = int;
 
+/*
+    Pair encoding height, width counting from 0.
+    Eg: "A4" -> (3, 0)
+        "B2" -> (1, 1)
+        "C7" -> (6, 2)
+*/
 using square_t = std::pair<pos_t, pos_t>;
 
+/*
+    Rectangular array, encodes information about piece standing at given square.
+    Eg: 'w' stays at "A4" square then:
+            board[3][0] = WP
+        'b' stays at "B2" square then:
+            board[1][1] = BP
+        nothing stays at "C7" square then:
+            board[6][2] = NP
+*/
 using board_t = std::vector<std::vector<piece_t>>;
 
 /*

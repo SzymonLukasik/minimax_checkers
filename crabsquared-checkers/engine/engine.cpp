@@ -16,6 +16,8 @@ inline std::string sqtostr(square_t sq)
 {
     return {char(sq.second + char('A')), char(sq.first + char('1'))};
 }
+pos_t board_width(board_t const& board);
+pos_t board_height(board_t const& board);
 
 board_t board1 = {
     {WP, NP, WP, NP, WP, NP, WP, NP},
@@ -76,9 +78,9 @@ std::ostream &operator<<(std::ostream &os, board_moves_t vm)
 
 std::ostream &operator<<(std::ostream &os, board_t board)
 {
-    for (int i = 0; i < BOARD_HEIGHT; i++)
+    for (pos_t i = 0; i < board_height(board); i++)
     {
-        for (int j = 0; j < BOARD_WIDTH; j++)
+        for (pos_t j = 0; j < board_width(board); j++)
         {
             os << board[i][j];
         }
@@ -104,12 +106,24 @@ bool operator==(square_t sq1, square_t sq2)
     return sq1.first == sq2.first && sq1.second == sq2.second;
 }
 
+inline pos_t board_height(board_t const& board){
+    return board.size();
+}
+
+inline pos_t board_width(board_t const& board){
+    return board[0].size();
+}
+
+inline pos_t board_n_squares(board_t const& board){
+    return board_height(board) * board_width(board);
+}
+
 /*
     Convert square_t to int used in indexing std::bitset<N_SQUARES>.
 */
-inline int sqto1d(square_t sq)
+inline int sqto1d(board_t const& board, square_t sq)
 {
-    return BOARD_WIDTH * sq.first + sq.second;
+    return board_width(board) * sq.first + sq.second;
 }
 
 /*
@@ -121,11 +135,11 @@ inline bool are_oposing_colors(piece_color_t color1, piece_color_t color2)
 }
 
 /*
-    Returns true iff pos is in [0, BOARD_HEIGHT) x [0, BOARD_WIDTH).
+    Returns true iff 'sq' is in [0, board_height(board)) x [0, board_width(board)).
 */
-inline bool in_board(square_t sq)
+inline bool in_board(board_t const& board, square_t sq)
 {
-    return sq.first >= 0 && sq.first < BOARD_HEIGHT && sq.second >= 0 && sq.second < BOARD_WIDTH;
+    return sq.first >= 0 && sq.first < board_height(board) && sq.second >= 0 && sq.second < board_width(board);
 }
 
 /*
@@ -160,6 +174,21 @@ std::list<dir_t> piece_dirs(piece_t piece)
 }
 
 /*
+    Returns list of all possible squares for given board.
+*/
+std::list<square_t> board_squares(board_t const& board){
+    std::list<square_t> ret;
+    for (pos_t pos_h = 0; pos_h < board_height(board); pos_h++)
+    {
+        for (pos_t pos_w = 0; pos_w < board_width(board); pos_w++)
+        {
+            ret.push_back({pos_h, pos_w});
+        }
+    }
+    return ret;
+}
+
+/*
     Returns color of a given piece.
 */
 piece_color_t piece_color(piece_t piece)
@@ -177,7 +206,7 @@ piece_color_t piece_color(piece_t piece)
 */
 piece_t get_piece(board_t const &board, square_t sq)
 {
-    if (!in_board(sq))
+    if (!in_board(board, sq))
         return O;
     return board[sq.first][sq.second];
 }
@@ -191,22 +220,18 @@ board_moves_t valid_moves(board_t const &board, piece_color_t color)
 {
     board_moves_t ret;
     bool capture_possible = false;
-    for (pos_t pos_h = 0; pos_h < BOARD_HEIGHT; pos_h++)
-    {
-        for (pos_t pos_w = pos_h % 2; pos_w < BOARD_WIDTH; pos_w += 2)
-        {
-            bool capture_possible_tmp = false;
-            square_t sq = {pos_h, pos_w};
-            square_moves_t square_moves = square_valid_moves(board,
-                                                             sq,
-                                                             color,
-                                                             capture_possible_tmp);
-            if (!square_moves.empty())
-                ret[sq] = square_moves;
+    for(square_t sq : board_squares(board)){
+        bool capture_possible_tmp = false;
+        square_moves_t square_moves = square_valid_moves(board,
+                                                        sq,
+                                                        color,
+                                                        capture_possible_tmp);
+        if (!square_moves.empty())
+            ret[sq] = square_moves;
 
-            capture_possible |= capture_possible_tmp;
-        }
+        capture_possible |= capture_possible_tmp;
     }
+    
     if (capture_possible)
         remove_non_capture_moves(ret);
 
@@ -254,10 +279,11 @@ square_moves_t square_non_capture_moves(board_t const &board,
     return ret;
 }
 
+using visited_t = std::vector<std::vector<bool>>;
 square_moves_t square_capture_moves_helper(board_t const &board,
                                            square_t sq,
                                            bool &capture_possible,
-                                           std::bitset<N_SQUARES> &captured,
+                                           visited_t &captured,
                                            square_t start_sq);
 /*
     Returns a list of legal capture moves for given board, player color and square.
@@ -268,7 +294,12 @@ square_moves_t square_capture_moves(board_t const &board,
                                     square_t sq,
                                     bool &capture_possible)
 {
-    std::bitset<N_SQUARES> captured;
+    auto captured = visited_t(
+        board_height(board),
+        std::vector<bool>(
+            board_width(board),
+            false));
+    
     square_moves_t ret_tmp =
         square_capture_moves_helper(board, sq, capture_possible, captured, sq);
     // Erase artefact moves created by helper function.
@@ -287,7 +318,7 @@ square_moves_t square_capture_moves(board_t const &board,
 square_moves_t square_capture_moves_helper(board_t const &board,
                                            square_t sq,
                                            bool &capture_possible,
-                                           std::bitset<N_SQUARES> &captured,
+                                           visited_t &captured,
                                            square_t start_sq)
 {
     square_moves_t ret;
@@ -301,7 +332,8 @@ square_moves_t square_capture_moves_helper(board_t const &board,
         piece_color_t fst_color = piece_color(get_piece(board, fst_sq));
         // If a piece is of oposing color and hasn't been captured yet
         // we can consider capturing it.
-        if (are_oposing_colors(color, fst_color) && !captured[sqto1d(fst_sq)])
+        if (are_oposing_colors(color, fst_color)
+            && !captured[fst_sq.first][fst_sq.second])
         {
             square_t snd_sq = fst_sq + dir;
             piece_t snd_piece = get_piece(board, snd_sq);
@@ -309,11 +341,11 @@ square_moves_t square_capture_moves_helper(board_t const &board,
             // the piece from 'fst_sq'.
             if (snd_piece == NP || snd_sq == start_sq)
             {
-                captured[sqto1d(fst_sq)] = true;
+                captured[fst_sq.first][fst_sq.second] = true;
                 // Get capturing sequence starting from 'snd_sq'.
                 square_moves_t ret_tmp = square_capture_moves_helper(board, snd_sq, capture_possible, captured, start_sq);
                 capture_possible = true;
-                captured[sqto1d(fst_sq)] = false;
+                captured[fst_sq.first][fst_sq.second] = false;
 
                 // Prepend 'sq' to obtained capturing sequence.
                 for (auto &move : ret_tmp)
