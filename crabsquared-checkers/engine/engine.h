@@ -75,7 +75,7 @@ using move_t = std::list<square_t>;
 using square_moves_t = std::list<move_t>;
 
 /*
-    A map of all valid moves in a possition.
+    A map of all valid moves in a position.
     If a move which is a capture is possible,
     should exclude all non-capture moves.
 */
