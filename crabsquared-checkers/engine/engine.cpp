@@ -1,8 +1,9 @@
-#include "engine.h"
-#include <cmath>
 #include <vector>
 #include <bitset>
 #include <algorithm>
+#include <iostream>
+
+#include "engine.h"
 
 /*
     Converts pos to square name.
@@ -13,6 +14,7 @@ inline std::string sqtostr(square_t sq)
 {
     return {char(sq.second + char('A')), char(sq.first + char('1'))};
 }
+
 pos_t board_width(board_t const& board);
 pos_t board_height(board_t const& board);
 
@@ -85,8 +87,6 @@ std::ostream &operator<<(std::ostream &os, board_t board)
     }
     return os;
 }
-
-/// IMPLEMENTATION
 
 /*
     Vector indicating in which direction to push a piece.
@@ -329,7 +329,7 @@ square_moves_t square_capture_moves_helper(board_t const &board,
         piece_color_t fst_color = piece_color(get_piece(board, fst_sq));
         // If a piece is of opposing color and hasn't been captured yet,
         // we can consider capturing it.
-        if (are_oposing_colors(color, fst_color)
+        if (are_opposing_colors(color, fst_color)
             && !captured[fst_sq.first][fst_sq.second])
         {
             square_t snd_sq = fst_sq + dir;
