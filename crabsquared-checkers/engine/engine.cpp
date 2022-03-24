@@ -4,11 +4,8 @@
 #include <bitset>
 #include <algorithm>
 
-/// TESTS
-
-#include <iostream>
 /*
-    Converts pos to sqare name.
+    Converts pos to square name.
     Eg: (1,2) -> "C2"
         (3,5) -> "F4"
 */
@@ -127,9 +124,9 @@ inline int sqto1d(board_t const& board, square_t sq)
 }
 
 /*
-    Oposing colors are white and black.
+    Opposing colors are white and black.
 */
-inline bool are_oposing_colors(piece_color_t color1, piece_color_t color2)
+inline bool are_opposing_colors(piece_color_t color1, piece_color_t color2)
 {
     return color1 != N && color2 != N && color1 != color2;
 }
@@ -330,7 +327,7 @@ square_moves_t square_capture_moves_helper(board_t const &board,
     {
         square_t fst_sq = sq + dir;
         piece_color_t fst_color = piece_color(get_piece(board, fst_sq));
-        // If a piece is of oposing color and hasn't been captured yet
+        // If a piece is of opposing color and hasn't been captured yet,
         // we can consider capturing it.
         if (are_oposing_colors(color, fst_color)
             && !captured[fst_sq.first][fst_sq.second])
@@ -397,13 +394,4 @@ void remove_non_capture_moves(board_moves_t &board_moves)
             ++it;
         }
     }
-}
-
-/// tests. TODO
-
-int main()
-{
-    std::cout << valid_moves(board2, W);
-
-    return 0;
 }
