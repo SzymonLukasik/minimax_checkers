@@ -5,7 +5,7 @@ class Square extends React.Component {
 
     getClassName() {
         return (
-            (this.props.position.playable() === true)
+            (this.props.position.isPlayable() === true)
             ? (
                 (this.props.chosen === true)
                 ? 'square-chosen'

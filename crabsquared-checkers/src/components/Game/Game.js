@@ -5,7 +5,6 @@ import './Game.css';
 import Board from '../Board/Board';
 import InfoPanel from '../InfoPanel/InfoPanel';
 import Move from './Move';
-import { Position } from './Position';
 
 export default class Game extends React.Component {
     constructor(props){
@@ -38,7 +37,29 @@ export default class Game extends React.Component {
 
         /** Contains all game states previous to the current one. */
         this.history = [];
+
+        /** Helps handle moves. */
         this.move = new Move(this);
+    }
+
+    getBoard() {
+        return this.state.board;
+    }
+
+    getActivePlayer() {
+        return this.state.activePlayer;
+    }
+
+    getChosenPiece() {
+        return this.state.chosenPiece;
+    }
+
+    getAvailablePaths() {
+        return this.state.availablePaths;
+    }
+
+    getPathTravelled() {
+        return this.state.pathTravelled;
     }
 
     /**
@@ -49,18 +70,28 @@ export default class Game extends React.Component {
     }
 
     /**
+     * Returns flattened list of available paths, i.e. list of arrays of form [x, y].
+     */
+    getAvailableSquares() {
+        return this.state.availablePaths ? this.state.availablePaths.flat() : [];
+    }
+
+    /**
+     * Returns whether a move is in progress.
+     * Move is in progress when path travelled is not empty.
+     */
+    #isMoveInProgress() {
+        return this.state.pathTravelled.length > 0;
+    }
+
+    /**
      * Handles a choose of a piece.
      * @param {*} position - clicked position
      * @returns whether a piece was choosen successfully
      */
-    choosePiece(position) {
+    #choosePiece(position) {
         if (this.state.board.atPosition(position) === this.state.activePlayer) {
-            this.move.choosePiece(position);
-            this.setState({
-                ...this.state,
-                chosenPiece: position,
-                availablePaths: this.move.getAvailablePaths()
-            });
+            this.setState(this.move.choosePiece(position));
             return true;
         }
         return false;
@@ -69,7 +100,7 @@ export default class Game extends React.Component {
     /**
      * Returns whether a piece was already chosen.
      */
-    isPieceChosen() {
+    #isPieceChosen() {
         return this.state.chosenPiece !== null;
     }
 
@@ -78,34 +109,18 @@ export default class Game extends React.Component {
      * It looks for a path that starts with a clicked position amongst available paths.
      * @param {*} position - clicked position
      */
-    isAvailable(position) {
-        return this.move.getAvailablePaths().some(([first, ..._]) => position.isEqual(first));
+    #isAvailable(position) {
+        return this.getAvailablePaths().some(([first, ..._]) => position.isEqual(first));
     }
 
     /**
      * Moves chosen piece to a clicked position if the position is available.
      * @param {*} position - clicked position
      */
-    movePiece(position) {
-        if (this.isAvailable(position)) {
-            var captured = this.move.jumpOn(position);
+    #movePiece(position) {
+        if (this.#isAvailable(position)) {
             this.history.push(cloneDeep(this.state));
-            this.setState(state => {
-                return {
-                    board: state.board.map(
-                        (row, i) => row.map((el, j) =>
-                            (state.chosenPiece.isEqual([i, j]) || Position.areEqual(captured, [i, j]))  
-                            ? '-'
-                            : position.isEqual([i, j]) 
-                            ? state.activePlayer
-                            : el)),
-                    activePlayer: this.move.inProgress() ? state.activePlayer : this.getOpponent(),
-                    count: state.count + 1,
-                    chosenPiece:  this.move.inProgress() ? position : null,
-                    availablePaths: this.move.getAvailablePaths(),
-                    pathTravelled: this.move.getPathTravelled()
-                }
-            });
+            this.setState(this.move.jumpOn(position));
         }
     }
 
@@ -118,9 +133,9 @@ export default class Game extends React.Component {
      * @param {*} position - clicked position
      */
     handleSquareClick(position) {
-        if (this.move.inProgress()
-            || (!this.choosePiece(position) && this.isPieceChosen()))
-            this.movePiece(position);
+        if (this.#isMoveInProgress()
+            || (!this.#choosePiece(position) && this.#isPieceChosen()))
+            this.#movePiece(position);
     }
 
     /**
@@ -131,7 +146,6 @@ export default class Game extends React.Component {
     handleUndoClick() {
         if (this.history.length > 0) {
             var previousState = this.history.pop();
-            this.move.loadState(previousState);
             this.setState(previousState);
         }
     }
@@ -141,8 +155,8 @@ export default class Game extends React.Component {
             <Board board={this.state.board}
                    handleClick={this.handleSquareClick}
                    chosenPiece={this.state.chosenPiece}
-                   availableSquares={this.move.availableSquares()}
-                   pathTravelled={this.move.getPathTravelled()}/>
+                   availableSquares={this.getAvailableSquares()}
+                   pathTravelled={this.state.pathTravelled}/>
         );
     }
 
@@ -153,7 +167,7 @@ export default class Game extends React.Component {
                     {this.renderBoard()}
                 </div>
                 <InfoPanel 
-                    handleUndoClick= {this.handleUndoClick}
+                    handleUndoClick={this.handleUndoClick}
                     currentPlayer={this.state.activePlayer}
                 />
             </div>

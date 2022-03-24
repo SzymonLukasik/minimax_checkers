@@ -19,6 +19,16 @@ export class Position {
             return new Position(...object);
         return object;
     }
+
+    /**
+     * Returns a possition being middle point between this and other.
+     * @param {*} other - Position or Array of form [x, y]
+     */
+     middle(other) {
+        other = Position.from(other);
+        var mid = (a, b) => Math.floor((a + b) / 2);
+        return new Position (mid(this.x, other.x), mid(this.y, other.y));
+    }
     
     /**
      * Returns a possition being middle point between a and b.
@@ -32,13 +42,13 @@ export class Position {
     }
 
     /**
-     * Returns a possition being middle point between this and other.
-     * @param {*} other - Position or Array of form [x, y]
+     * Compares this with other. Other might be null.
+     * @param {*} other - Position or Array of form [x, y] or null
      */
-    middle(other) {
+     isEqual(other) {
+        if (other === null) return false;
         other = Position.from(other);
-        var mid = (a, b) => Math.floor((a + b) / 2);
-        return new Position (mid(this.x, other.x), mid(this.y, other.y));
+        return  this.x === other.x && this.y === other.y;
     }
 
     /**
@@ -54,16 +64,6 @@ export class Position {
     }
 
     /**
-     * Compares this with other. Other might be null.
-     * @param {*} other - Position or Array of form [x, y] or null
-     */
-    isEqual(other) {
-        if (other === null) return false;
-        other = Position.from(other);
-        return  this.x === other.x && this.y === other.y;
-    }
-
-    /**
      * Returns a position object representing, distances between this and other
      * on x-axis and y-axis.
      */
@@ -76,7 +76,7 @@ export class Position {
     /**
      * Checks whether a position is playable.
      */
-    playable() {
+    isPlayable() {
         return (this.x + this.y) % 2 === 0 ? true : false;
     }
 }
