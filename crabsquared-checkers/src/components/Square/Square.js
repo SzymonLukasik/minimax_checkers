@@ -3,7 +3,7 @@ import './Square.scss';
 
 class Square extends React.Component {
 
-    getClassName() {
+    #getClassName() {
         return (
             (this.props.position.isPlayable() === true)
             ? (
@@ -25,7 +25,7 @@ class Square extends React.Component {
 
     render() {
         return (
-            <button className={this.getClassName()} 
+            <button className={this.#getClassName()} 
                     onClick={() => this.props.onClick(this.props.position)}>
                 <div>
                     {

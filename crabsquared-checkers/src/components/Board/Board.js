@@ -6,7 +6,7 @@ import { Position } from '../Game/Position';
 
 class Board extends React.Component {
     
-    renderRow(row, i) {
+    #renderRow(row, i) {
         return (
             <div className="board-row" key={i}>
                 {row.map((el, j) => (
@@ -21,10 +21,10 @@ class Board extends React.Component {
         );
     }
 
-    renderBoard() {
+    #renderBoard() {
         return (
             <div className="board-row">
-                {this.props.board.map((row, i) => (this.renderRow(row, i)))}
+                {this.props.board.map((row, i) => (this.#renderRow(row, i)))}
             </div>
         );
     }
@@ -33,7 +33,7 @@ class Board extends React.Component {
         return (
             <div className="board">
                 <div>
-                    {this.renderBoard()}
+                    {this.#renderBoard()}
                 </div>
             </div>
         );
