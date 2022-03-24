@@ -6,6 +6,8 @@ project(crabsquared-checkers CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "-g -Wall -Wextra")
 
-add_executable(engine engine.cpp)
+add_library(engine engine.cpp)
+add_executable(test_engine test_engine.cpp)
+target_link_libraries(test_engine engine)
 
-# install(TARGETS DESTINATION .)  
+ install(TARGETS DESTINATION .)
