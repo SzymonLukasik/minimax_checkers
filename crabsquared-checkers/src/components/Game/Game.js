@@ -3,6 +3,7 @@ import { cloneDeep } from 'lodash';
 import './Game.css';
 
 import Board from '../Board/Board';
+import InfoPanel from '../InfoPanel/InfoPanel';
 import Move from './Move';
 import { Position } from './Position';
 
@@ -151,9 +152,10 @@ export default class Game extends React.Component {
                 <div className="game-board">
                     {this.renderBoard()}
                 </div>
-                <button className="undo-button"
-                        onClick={this.handleUndoClick}>
-                </button>
+                <InfoPanel 
+                    handleUndoClick= {this.handleUndoClick}
+                    currentPlayer={this.state.activePlayer}
+                />
             </div>
         );
     }

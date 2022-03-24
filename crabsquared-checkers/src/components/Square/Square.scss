@@ -49,15 +49,3 @@
     display: flex;
     justify-content: center;
 }
-
-.undo-button {
-    @extend .square;
-    background: #fff;
-    height: 102px;
-    width: 100px;
-    align-self: flex-end;
-    background-image: url('../../../public/undo_icon.png');
-    background-size: 100px 80px;
-    background-repeat: no-repeat;
-    background-position-y: center;
-}

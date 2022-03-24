@@ -1,0 +1,43 @@
+.info-panel{
+    margin-left: -4px;
+    margin-top: 10px;
+    width: 412px;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+}
+
+.info-item{
+    border: 1px solid #999;
+    background-color: #FFF;
+    height: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.undo-button {
+    border: 1px solid #999;
+    margin-bottom: -2px;
+    height: 52px;
+
+    margin-right: 10px;
+    padding: 0;
+    text-align: center;
+    background: #fff;
+
+    width: 52px;
+
+    align-self: flex-end;
+    background-image: url('../../../public/undo_icon.png');
+    background-size: 52px 52px;
+    background-repeat: no-repeat;
+    background-position-y: center;
+}
+
+.undo-button:hover {
+    border: 3px solid #999;
+}
