@@ -16,7 +16,7 @@ add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
 addTest(test_8x8_forward_only)
 addTest(test_8x8_clinch)
 addTest(test_8x8_single_capture)
-#addTest(test_8x8_multi_capture)
+addTest(test_8x8_multi_capture)
 #addTest(test_8x8_king_nocapture)
 #addTest(test_8x8_king_captures)
 #addTest(test_8x8)
