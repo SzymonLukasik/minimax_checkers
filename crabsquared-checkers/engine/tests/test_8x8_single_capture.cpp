@@ -45,6 +45,19 @@ const board_t board3 = board2;
 const piece_color_t col3 = W;
 const std::string result3 = "{B1: [|[|B1, D3|]|]}";
 
+// capture is obligatory, but the player can choose which capturing to do
+const board_t board4 = {
+        {NP, NP, WP, NP, NP, NP, NP, NP},
+        {NP, BP, NP, BP, NP, NP, NP, NP},
+        {NP, NP, NP, NP, NP, NP, NP, NP},
+        {NP, NP, NP, NP, NP, NP, NP, NP},
+        {NP, NP, NP, NP, NP, NP, NP, NP},
+        {NP, NP, NP, NP, NP, NP, NP, NP},
+        {NP, NP, NP, NP, NP, NP, NP, NP},
+        {NP, NP, NP, NP, NP, NP, NP, NP},
+};
+const piece_color_t col4 = W;
+const std::string result4 = "{C1: [|[|C1, A3|], [|C1, E3|]|]}";
 
 struct test_data {
     int id;
@@ -58,7 +71,8 @@ const test_data tests[] = {
         TEST(0),
         TEST(1),
         TEST(2),
-        TEST(3)
+        TEST(3),
+        TEST(4)
 };
 
 int main() {
