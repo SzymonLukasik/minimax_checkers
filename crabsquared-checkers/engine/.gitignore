@@ -1,5 +1,5 @@
 libengine.a
-test_engine
+build/
 .cmake/
 *.cbp
 
