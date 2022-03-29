@@ -2,6 +2,7 @@
 #include <bitset>
 #include <algorithm>
 #include <iostream>
+#include <optional>
 
 #include "engine.h"
 
@@ -55,13 +56,12 @@ inline int sqto1d(board_t const& board, square_t sq)
 {
     return board_width(board) * sq.first + sq.second;
 }
-
 /*
     Opposing colors are white and black.
 */
-inline bool are_opposing_colors(piece_color_t color1, piece_color_t color2)
+inline bool are_opposing_colors(std::optional<piece_color_t> color1, std::optional<piece_color_t> color2)
 {
-    return color1 != N && color2 != N && color1 != color2;
+    return color1.has_value() && color2.has_value() && color1 != color2;
 }
 
 /*
@@ -76,7 +76,7 @@ inline bool in_board(board_t const& board, square_t sq)
     Returns list of directions in which given piece can be pushed.
     Ignores board bounds.
 */
-std::list<dir_t> piece_dirs(piece_t piece)
+std::list<dir_t> piece_dirs(std::optional<piece_t> piece)
 {
     std::list<pos_t> dirs_h;
     if (piece == BK || piece == WK)
@@ -121,23 +121,23 @@ std::list<square_t> board_squares(board_t const& board){
 /*
     Returns color of a given piece.
 */
-piece_color_t piece_color(piece_t piece)
+std::optional<piece_color_t> piece_color(std::optional<piece_t> piece)
 {
     if (piece == BP || piece == BK)
         return B;
     if (piece == WP || piece == WK)
         return W;
-    return N;
+    return std::nullopt;
 }
 
 /*
     Safe way to query 'board' at square 'sq'.
-    Returns 'O' if out of bounds query.
+    Returns 'std::nullopt' if out of bounds query.
 */
-piece_t get_piece(board_t const &board, square_t sq)
+std::optional<piece_t> get_piece(board_t const &board, square_t sq)
 {
     if (!in_board(board, sq))
-        return O;
+        return std::nullopt;
     return board[sq.first][sq.second];
 }
 
@@ -254,19 +254,19 @@ square_moves_t square_capture_moves_helper(board_t const &board,
     square_moves_t ret;
     // The piece which we are moving.
     // 'board' is immutable therefore this piece sits on 'start_sq'.
-    piece_t piece = get_piece(board, start_sq);
-    piece_color_t color = piece_color(piece);
+    std::optional<piece_t> piece = get_piece(board, start_sq);
+    std::optional<piece_color_t> color = piece_color(piece);
     for (auto dir : piece_dirs(piece))
     {
         square_t fst_sq = sq + dir;
-        piece_color_t fst_color = piece_color(get_piece(board, fst_sq));
+        std::optional<piece_color_t> fst_color = piece_color(get_piece(board, fst_sq));
         // If a piece is of opposing color and hasn't been captured yet,
         // we can consider capturing it.
         if (are_opposing_colors(color, fst_color)
             && !captured[fst_sq.first][fst_sq.second])
         {
             square_t snd_sq = fst_sq + dir;
-            piece_t snd_piece = get_piece(board, snd_sq);
+            std::optional<piece_t> snd_piece = get_piece(board, snd_sq);
             // If the square after 'fst_sq' is free then we can capture
             // the piece from 'fst_sq'.
             if (snd_piece == NP || snd_sq == start_sq)
