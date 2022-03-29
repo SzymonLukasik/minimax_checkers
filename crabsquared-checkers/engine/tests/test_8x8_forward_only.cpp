@@ -26,7 +26,8 @@ const piece_color_t col1 = W;
 const std::string result1 = "{}";
 
 const board_t board2 = board0;
-const piece_color_t col2 = N;
+// N color - illegal
+//const piece_color_t col2 = N; 
 const std::string result2 = "{}";
 
 

@@ -11,7 +11,6 @@
     BK - black king
     WK - white king
     NP - no piece
-    O  - out of bounds
 */
 enum piece_t
 {
@@ -20,18 +19,15 @@ enum piece_t
     BK,
     WK,
     NP,
-    O
 };
 /*
     B - black
     W - white
-    N - none
 */
 enum piece_color_t
 {
     B,
     W,
-    N,
 };
 
 /*
