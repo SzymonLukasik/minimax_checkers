@@ -1,0 +1,51 @@
+.square {
+    border: 1px solid #999;
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 50px;
+    height: 50px;
+    margin-right: 2px;
+    margin-top: 2px;
+    padding: 0;
+    text-align: center;
+    width: 50px;
+}
+
+.square-playable {
+    @extend .square;
+    background: rgb(231, 198, 203);
+}
+
+.square-idle {
+    @extend .square;
+    background: #fff;
+}
+
+.square-chosen {
+    @extend .square-playable;
+    background: rgb(2, 185, 231)
+}
+
+.square-available {
+    @extend .square-playable;
+    background: rgb(8, 235, 235);
+}
+
+.square-travelled {
+    @extend .square-playable;
+    background: rgb(236, 107, 150);
+}
+
+.square:focus {
+    outline: none;
+}
+
+.square:hover {
+    border: 3px solid #999;
+}
+
+.game {
+    display: flex;
+    justify-content: center;
+}

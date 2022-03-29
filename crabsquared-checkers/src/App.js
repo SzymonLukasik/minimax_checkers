@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import './style/App.css';
+import React from 'react';
+import './App.css';
+
+import Game from './components/Game/Game';
+import Title from './components/Title/Title';
 
 function App() {
-  const [testVar, setTestVar] = useState(0);
+  /*
+  const [currentTime, setCurrentTime] = useState(0);
 
   useEffect(() => {
     fetch('/available_moves', {
@@ -25,15 +29,12 @@ function App() {
     .then(res => res.json())
     .then(data => { setTestVar(data); });
   }, []);
+  */
 
   return (
-    <div className="App">        
-        <p>
-          🦀 CrabSquared Rulez 🦀
-        </p>
-        <p>
-          {JSON.stringify(testVar, null, 2)}
-        </p>
+    <div className="App">
+      <Title />        
+      <Game />
     </div>
   );
   
