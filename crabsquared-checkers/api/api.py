@@ -1,4 +1,5 @@
 from flask import Flask, request
+from ..bot.bot import get_move
 
 app = Flask(__name__)
 
@@ -22,6 +23,7 @@ def get_avaliable_moves():
 @app.route('/bot_move', methods=['POST'])
 def get_bot_move():
     board = request.json['state']
+    get_move(board)
     return {
         'type': 'bot_move',
         'move': ['A1', 'A2']
