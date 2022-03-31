@@ -52,4 +52,17 @@ std::ostream& operator<<(std::ostream& os, const std::map<U, V>& x)
     return os;
 }
 
+std::ostream &operator<<(std::ostream &os, board_t board)
+{
+  for (size_t i = 0; i < board.size(); i++)
+  {
+    for (size_t j = 0; j < board[0].size(); j++)
+    {
+      os << board[i][j];
+    }
+    os << "\n";
+  }
+  return os;
+}
+
 #endif //CRABSQUARED_CHECKERS_UTILS_H

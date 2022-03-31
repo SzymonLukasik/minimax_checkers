@@ -9,19 +9,6 @@
 pos_t board_width(board_t const& board);
 pos_t board_height(board_t const& board);
 
-std::ostream &operator<<(std::ostream &os, board_t board)
-{
-    for (pos_t i = 0; i < board_height(board); i++)
-    {
-        for (pos_t j = 0; j < board_width(board); j++)
-        {
-            os << board[i][j];
-        }
-        os << "\n";
-    }
-    return os;
-}
-
 /*
     Vector indicating in which direction to push a piece.
 */
