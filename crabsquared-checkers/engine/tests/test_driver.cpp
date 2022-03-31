@@ -1,8 +1,9 @@
 #include <iostream>
 #include <sstream>
 #include <cassert>
-#include "utils.h"
-#include "test_driver.h"
+#include "tests/utils.h"
+#include "tests/test_driver.h"
+
 
 int main() {
   for (const test_data& test : tests) {
