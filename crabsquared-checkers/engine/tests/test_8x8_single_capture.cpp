@@ -1,9 +1,7 @@
-#include <iostream>
-#include <sstream>
-#include <cassert>
-
+#include <string>
 #include "../engine.h"
 #include "utils.h"
+#include "test_driver.h"
 
 using namespace std;
 
@@ -59,33 +57,10 @@ const board_t board4 = {
 const piece_color_t col4 = W;
 const std::string result4 = "{C1: [|[|C1, A3|], [|C1, E3|]|]}";
 
-struct test_data {
-    int id;
-    board_t board;
-    piece_color_t col;
-    std::string result;
-};
-#define TEST(n) {n, board##n, col##n, result##n}
-
-const test_data tests[] = {
+const std::vector<test_data> tests = {
         TEST(0),
         TEST(1),
         TEST(2),
         TEST(3),
         TEST(4)
 };
-
-int main() {
-    for (const test_data& test : tests) {
-        std::stringstream ss;
-        ss << valid_moves(test.board, test.col);
-        if (ss.str() != test.result) {
-            std::cerr <<
-                      "Test " << test.id <<
-                      ": expected " << test.result <<
-                      " got: " << ss.str() << '\n';
-        }
-        assert(ss.str() == test.result);
-    }
-    return 0;
-}
