@@ -23,8 +23,8 @@ def get_avaliable_moves():
 @app.route('/bot_move', methods=['POST'])
 def get_bot_move():
     board = request.json['state']
-    get_move(board)
+    move = get_move(board)
     return {
         'type': 'bot_move',
-        'move': ['A1', 'A2']
+        'move': move
     }
