@@ -1,5 +1,5 @@
 from flask import request
-from .. import app
+from ..app import app
 from ..bot.bot import get_move
 from ..engine.python import engine
 
