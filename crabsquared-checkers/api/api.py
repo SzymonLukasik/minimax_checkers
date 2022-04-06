@@ -1,8 +1,7 @@
-from flask import Flask, request
+from flask import request
+from .. import app
 from ..bot.bot import get_move
 from ..engine.python import engine
-
-app = Flask(__name__)
 
 @app.route('/')
 def api_base():
