@@ -5,7 +5,7 @@ function App() {
   const [testVar, setTestVar] = useState(0);
 
   useEffect(() => {
-    fetch('/bot_move', {
+    fetch('/available_moves', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
