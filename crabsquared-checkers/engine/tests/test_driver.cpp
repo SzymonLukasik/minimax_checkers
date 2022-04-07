@@ -1,0 +1,21 @@
+#include <iostream>
+#include <sstream>
+#include <cassert>
+#include "tests/utils.h"
+#include "tests/test_driver.h"
+
+
+int main() {
+  for (const test_data& test : tests) {
+    std::stringstream ss;
+    ss << valid_moves(test.board, test.col);
+    if (ss.str() != test.result) {
+      std::cerr <<
+                "Test " << test.id <<
+                ": expected " << test.result <<
+                " got: " << ss.str() << '\n';
+    }
+    assert(ss.str() == test.result);
+  }
+  return 0;
+}

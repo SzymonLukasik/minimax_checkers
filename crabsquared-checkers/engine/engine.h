@@ -11,7 +11,6 @@
     BK - black king
     WK - white king
     NP - no piece
-    O  - out of bounds
 */
 enum piece_t
 {
@@ -20,18 +19,15 @@ enum piece_t
     BK,
     WK,
     NP,
-    O
 };
 /*
     B - black
     W - white
-    N - none
 */
 enum piece_color_t
 {
     B,
     W,
-    N,
 };
 
 /*
@@ -75,7 +71,7 @@ using move_t = std::list<square_t>;
 using square_moves_t = std::list<move_t>;
 
 /*
-    A map of all valid moves in a possition.
+    A map of all valid moves in a position.
     If a move which is a capture is possible,
     should exclude all non-capture moves.
 */

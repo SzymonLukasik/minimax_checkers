@@ -1,95 +1,13 @@
-#include "engine.h"
-#include <cmath>
 #include <vector>
 #include <bitset>
 #include <algorithm>
-
-/// TESTS
-
 #include <iostream>
-/*
-    Converts pos to sqare name.
-    Eg: (1,2) -> "C2"
-        (3,5) -> "F4"
-*/
-inline std::string sqtostr(square_t sq)
-{
-    return {char(sq.second + char('A')), char(sq.first + char('1'))};
-}
+#include <optional>
+
+#include "engine.h"
+
 pos_t board_width(board_t const& board);
 pos_t board_height(board_t const& board);
-
-board_t board1 = {
-    {WP, NP, WP, NP, WP, NP, WP, NP},
-    {NP, WP, NP, WP, NP, WP, NP, WP},
-    {WP, NP, WP, NP, WP, NP, WP, NP},
-    {NP, NP, NP, NP, NP, NP, NP, NP},
-    {NP, NP, WP, NP, NP, NP, NP, NP},
-    {NP, BP, NP, BP, NP, BP, NP, BP},
-    {BP, NP, BP, NP, BP, NP, BP, NP},
-    {NP, BP, NP, BP, NP, BP, NP, BP},
-};
-
-board_t board2 = {
-    {NP, NP, NP, NP, NP, NP, NP, NP},
-    {NP, BP, NP, BP, NP, NP, NP, NP},
-    {NP, NP, NP, NP, NP, NP, NP, NP},
-    {NP, BP, NP, BP, NP, NP, NP, NP},
-    {NP, NP, WK, NP, NP, NP, NP, NP},
-    {NP, NP, NP, NP, NP, NP, NP, NP},
-    {NP, NP, NP, NP, NP, NP, NP, NP},
-    {NP, NP, NP, NP, NP, NP, NP, NP},
-};
-
-std::ostream &operator<<(std::ostream &os, square_t sq)
-{
-    os << sqtostr(sq);
-    return os;
-}
-std::ostream &operator<<(std::ostream &os, move_t mv)
-{
-    for (auto sq : mv)
-    {
-        os << sq << " ";
-    }
-    return os;
-}
-std::ostream &operator<<(std::ostream &os, square_moves_t ml)
-{
-    for (auto mv : ml)
-    {
-        os << "{" << mv << "}";
-    }
-    return os;
-}
-std::ostream &operator<<(std::ostream &os, std::pair<square_t, square_moves_t> p)
-{
-    os << p.first << ": " << p.second;
-    return os;
-}
-std::ostream &operator<<(std::ostream &os, board_moves_t vm)
-{
-    for (auto m : vm)
-    {
-        std::cout << m << std::endl;
-    }
-    return os;
-}
-
-std::ostream &operator<<(std::ostream &os, board_t board)
-{
-    for (pos_t i = 0; i < board_height(board); i++)
-    {
-        for (pos_t j = 0; j < board_width(board); j++)
-        {
-            os << board[i][j];
-        }
-        os << "\n";
-    }
-    return os;
-}
-
-/// IMPLEMENTATION
 
 /*
     Vector indicating in which direction to push a piece.
@@ -125,13 +43,12 @@ inline int sqto1d(board_t const& board, square_t sq)
 {
     return board_width(board) * sq.first + sq.second;
 }
-
 /*
-    Oposing colors are white and black.
+    Opposing colors are white and black.
 */
-inline bool are_oposing_colors(piece_color_t color1, piece_color_t color2)
+inline bool are_opposing_colors(std::optional<piece_color_t> color1, std::optional<piece_color_t> color2)
 {
-    return color1 != N && color2 != N && color1 != color2;
+    return color1.has_value() && color2.has_value() && color1 != color2;
 }
 
 /*
@@ -146,7 +63,7 @@ inline bool in_board(board_t const& board, square_t sq)
     Returns list of directions in which given piece can be pushed.
     Ignores board bounds.
 */
-std::list<dir_t> piece_dirs(piece_t piece)
+std::list<dir_t> piece_dirs(std::optional<piece_t> piece)
 {
     std::list<pos_t> dirs_h;
     if (piece == BK || piece == WK)
@@ -191,23 +108,23 @@ std::list<square_t> board_squares(board_t const& board){
 /*
     Returns color of a given piece.
 */
-piece_color_t piece_color(piece_t piece)
+std::optional<piece_color_t> piece_color(std::optional<piece_t> piece)
 {
     if (piece == BP || piece == BK)
         return B;
     if (piece == WP || piece == WK)
         return W;
-    return N;
+    return std::nullopt;
 }
 
 /*
     Safe way to query 'board' at square 'sq'.
-    Returns 'O' if out of bounds query.
+    Returns 'std::nullopt' if out of bounds query.
 */
-piece_t get_piece(board_t const &board, square_t sq)
+std::optional<piece_t> get_piece(board_t const &board, square_t sq)
 {
     if (!in_board(board, sq))
-        return O;
+        return std::nullopt;
     return board[sq.first][sq.second];
 }
 
@@ -324,19 +241,19 @@ square_moves_t square_capture_moves_helper(board_t const &board,
     square_moves_t ret;
     // The piece which we are moving.
     // 'board' is immutable therefore this piece sits on 'start_sq'.
-    piece_t piece = get_piece(board, start_sq);
-    piece_color_t color = piece_color(piece);
+    std::optional<piece_t> piece = get_piece(board, start_sq);
+    std::optional<piece_color_t> color = piece_color(piece);
     for (auto dir : piece_dirs(piece))
     {
         square_t fst_sq = sq + dir;
-        piece_color_t fst_color = piece_color(get_piece(board, fst_sq));
-        // If a piece is of oposing color and hasn't been captured yet
+        std::optional<piece_color_t> fst_color = piece_color(get_piece(board, fst_sq));
+        // If a piece is of opposing color and hasn't been captured yet,
         // we can consider capturing it.
-        if (are_oposing_colors(color, fst_color)
+        if (are_opposing_colors(color, fst_color)
             && !captured[fst_sq.first][fst_sq.second])
         {
             square_t snd_sq = fst_sq + dir;
-            piece_t snd_piece = get_piece(board, snd_sq);
+            std::optional<piece_t> snd_piece = get_piece(board, snd_sq);
             // If the square after 'fst_sq' is free then we can capture
             // the piece from 'fst_sq'.
             if (snd_piece == NP || snd_sq == start_sq)
@@ -397,13 +314,4 @@ void remove_non_capture_moves(board_moves_t &board_moves)
             ++it;
         }
     }
-}
-
-/// tests. TODO
-
-int main()
-{
-    std::cout << valid_moves(board2, W);
-
-    return 0;
 }
