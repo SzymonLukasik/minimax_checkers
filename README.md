@@ -16,3 +16,9 @@
 ### API Endpoints
 
 `5000/time` - returns time value for API testing
+
+
+
+### Bots
+
+Each bot is expected to provide get_move(board) function that takes board and returns bot's move. Board and move are represented the same way they are represented in jsons.
