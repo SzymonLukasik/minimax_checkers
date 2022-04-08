@@ -20,8 +20,8 @@ export class PathsLoader {
     #getNonCaptures(x, y) {
         var b, e;
         var player = this.game.getActivePlayer();
-        if ((player === 'b' && x > 0) || (player === 'c' && x < 7)) {
-            [b, e] = player === 'b' ? [x - 1, x] : [x + 1, x + 2];
+        if ((player === 'w' && x > 0) || (player === 'b' && x < 7)) {
+            [b, e] = player === 'w' ? [x - 1, x] : [x + 1, x + 2];
             return this.game.getBoard()
                 .slice(b, e)[0]
                 .flatMap((el, j) => 
@@ -40,11 +40,11 @@ export class PathsLoader {
      */
     #getSingleCaptures(x, y) {
         var player = this.game.getActivePlayer();
-        if ((player === 'b' && x > 1) || (player === 'c' && x < 6)) {
+        if ((player === 'w' && x > 1) || (player === 'b' && x < 6)) {
             var opponent = this.game.getOpponent();
             var board = this.game.getBoard();
             var b, e;
-            [b, e] = player === 'b' ? [x - 2, x - 1] : [x + 2, x + 3];
+            [b, e] = player === 'w' ? [x - 2, x - 1] : [x + 2, x + 3];
             return board
                 .slice(b, e)[0]
                 .flatMap((el, j) => 
