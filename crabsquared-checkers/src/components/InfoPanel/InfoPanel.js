@@ -10,7 +10,7 @@ const InfoPanel = ({handleUndoClick, currentPlayer}) => {
             <div className='info-item'>
                 Current Player:  
                 {
-                    (currentPlayer === 'b')
+                    (currentPlayer === 'w')
                     ? '🦀'
                     : '🕷️'
                 }
