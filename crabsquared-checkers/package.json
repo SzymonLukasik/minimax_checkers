@@ -13,6 +13,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "compile": "sh compile.sh",
     "start": "react-scripts start",
     "start-api": "flask run --no-debugger",
     "build": "react-scripts build",
