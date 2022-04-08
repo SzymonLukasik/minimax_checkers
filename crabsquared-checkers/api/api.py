@@ -1,6 +1,7 @@
-from flask import Flask, request
-
-app = Flask(__name__)
+from flask import request
+from ..app import app
+from ..bot.bot import get_move
+from ..engine.python import engine
 
 @app.route('/')
 def api_base():
@@ -12,17 +13,17 @@ def api_base():
 @app.route('/available_moves', methods=['POST'])
 def get_avaliable_moves():
     board = request.json['state']
+    moves = engine.valid_moves(board, 1)
     return {
         'type': 'available_moves', 
-        'available_moves': {
-            'A1': [['A1', 'B2']]
-        }
+        'available_moves': moves
     }
 
 @app.route('/bot_move', methods=['POST'])
 def get_bot_move():
     board = request.json['state']
+    move = get_move(board)
     return {
         'type': 'bot_move',
-        'move': ['A1', 'A2']
+        'move': move
     }
