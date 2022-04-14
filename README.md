@@ -15,7 +15,8 @@
 
 ### API Endpoints
 
-`5000/time` - returns time value for API testing
+`5000/available_moves` - returns available moves
+`5000/bot_move` - returns one bot move
 
 
 
