@@ -28,6 +28,7 @@ def get_bot_move():
         'move': move
     }
 
+# Tests
 import json
 
 @app.route('/test')
