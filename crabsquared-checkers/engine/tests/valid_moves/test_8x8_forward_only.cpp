@@ -1,7 +1,7 @@
 #include <string>
 #include "engine.h"
-#include "tests/utils.h"
-#include "tests/test_driver.h"
+#include "utils.h"
+#include "test_driver.h"
 
 using namespace std;
 

@@ -1,4 +1,5 @@
 #include <vector>
+#include <set>
 #include <bitset>
 #include <algorithm>
 #include <iostream>
@@ -314,4 +315,55 @@ void remove_non_capture_moves(board_moves_t &board_moves)
             ++it;
         }
     }
+}
+
+using square_set_t = std::set<square_t>;
+
+/*
+    If a move is a capture, returns a set of captured pieces. 
+    Otherwise returns a nulloption.
+*/
+std::optional<square_set_t> get_captured_pieces(move_t move)
+{
+    if (!is_capture_move(move))
+        return std::nullopt;
+    
+    static auto get_middle_pos = [] (pos_t a, pos_t b) -> pos_t { return (a + b) / 2; };
+    square_set_t ret;
+    for (auto curr = move.begin(), next = std::next(move.begin());
+         next != move.end();
+         curr++, next++)
+    {
+        square_t captured = {
+            get_middle_pos(curr->first, next->first), 
+            get_middle_pos(curr->second, next->second)
+        };
+        ret.insert(captured);
+    }
+
+    return ret;
+}
+
+void make_move(board_t &board, const move_t &move)
+{
+    square_set_t positions_to_clear = get_captured_pieces(move).value_or(square_set_t());
+    positions_to_clear.insert(*move.begin());
+
+    square_t start_square = *move.begin();
+    square_t end_square = *(std::prev(move.end()));
+    piece_t moved_piece = board[start_square.first][start_square.second];
+    
+    for (square_t sq : board_squares(board))
+    {
+        if (positions_to_clear.find(sq) != positions_to_clear.end())
+            board[sq.first][sq.second] = piece_t::NP;            
+    }
+    board[end_square.first][end_square.second] = moved_piece;
+}
+
+board_t get_board_after_move(const board_t &board, const move_t &move)
+{
+    board_t ret = board;
+    make_move(ret, move);
+    return ret;
 }

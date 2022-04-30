@@ -82,4 +82,14 @@ using board_moves_t = std::map<square_t, square_moves_t>;
 */
 board_moves_t valid_moves(board_t const &board, piece_color_t color);
 
+/*
+    Modifies a given board according to a given move.
+*/
+void make_move(board_t &board, const move_t &move);
+
+/*
+    For a given board and move returns a board after making the move.
+*/
+board_t get_board_after_move(const board_t &board, const move_t &move);
+
 #endif

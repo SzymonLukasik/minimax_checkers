@@ -2,7 +2,7 @@
 #define CRABSQUARED_CHECKERS_UTILS_H
 
 #include <iostream>
-#include "../engine.h"
+#include "engine.h"
 
 #define TEST(n) {n, board##n, col##n, result##n}
 

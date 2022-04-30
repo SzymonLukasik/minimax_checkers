@@ -1,8 +1,8 @@
 #include <iostream>
 #include <sstream>
 #include <cassert>
-#include "tests/utils.h"
-#include "tests/test_driver.h"
+#include "utils.h"
+#include "test_driver.h"
 
 
 int main() {

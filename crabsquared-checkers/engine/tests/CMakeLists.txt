@@ -1,7 +1,5 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.1)
 project(crabsquared-checkers)
-
-include_directories(..)
 
 macro(addTest name)
     add_executable(${name} test_driver.cpp ${name}.cpp)
@@ -15,11 +13,5 @@ add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND}
     --output-on-failure
 )
 
-addTest(test_8x8_forward_only)
-addTest(test_8x8_clinch)
-addTest(test_8x8_single_capture)
-addTest(test_8x8_multi_capture)
-addTest(test_8x8)
-addTest(test_edgecase)
-addTest(test_small)
-addTest(test_not_rectangular)
+add_subdirectory(make_move)
+add_subdirectory(valid_moves)
