@@ -5,20 +5,21 @@ import './Game.css';
 import Board from '../Board/Board';
 import InfoPanel from '../InfoPanel/InfoPanel';
 import Move from './Move';
+import { Position } from './Position';
 
 export default class Game extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             board: [
-                ['b','-','b','-','b','-','b','-'],
-                ['-','b','-','b','-','b','-','b'],
-                ['b','-','b','-','b','-','b','-'],
-                ['-','-','-','-','-','-','-','-'],
-                ['-','-','-','-','-','-','-','-'],
-                ['-','w','-','w','-','w','-','w'],
-                ['w','-','w','-','w','-','w','-'],
-                ['-','w','-','w','-','w','-','w']
+                ['b','.','b','.','b','.','b','.'],
+                ['.','b','.','b','.','b','.','b'],
+                ['b','.','b','.','b','.','b','.'],
+                ['.','.','.','.','.','.','.','.'],
+                ['.','.','.','.','.','.','.','.'],
+                ['.','w','.','w','.','w','.','w'],
+                ['w','.','w','.','w','.','w','.'],
+                ['.','w','.','w','.','w','.','w']
             ],
             
             activePlayer: 'w',
@@ -124,6 +125,71 @@ export default class Game extends React.Component {
         }
     }
 
+
+    /**
+     * Convert received two letter e.g. 'B3' string to Position (1, 2)
+     * @param {*} positionString - string of form 'B3'
+     * @returns Position
+     */
+    convertStringToPosition(string) {
+        return new Position(string.charCodeAt(1) - 49, string.charCodeAt(0) - 65);
+    }
+
+    /**
+     * Translate bot move to Position list
+     * @param {*} receivedMove - bot move in form of array of strings 
+     * @returns Position list
+     */
+    translateBotMove(receivedMove) {
+        return receivedMove.map(move => this.convertStringToPosition(move));
+    }
+
+
+    /**
+     * Converts state.board to array of strings supported by API (swaps 'b' and 'w' characters).
+     */
+    convertStateToSend() {
+        const boardToSend = this.state.board.map(row =>
+            row.map(piece => piece === 'b' ? 'w' : (piece === 'w' ? 'b' : piece)));
+        return boardToSend;
+    }
+
+    /**
+     * Fetches a bot move from the server and performs it.
+     */
+    performBotMove = async () => {
+        fetch('/bot_move', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              'type': 'board',
+              'state': this.convertStateToSend()
+            })
+        }).then(response => response.json()).then(data => {
+            console.log(data.move);
+            var moves = this.translateBotMove(data.move);
+            console.log(moves);
+            
+            // perform each by choose and jump
+            for(var i = 0; i < moves.length - 1; i++) {
+                this.#choosePiece(moves[i]);
+                setTimeout(function(targetMove) {
+                    console.log(moves[i+1]);
+                    this.setState(this.move.jumpOn(targetMove));
+                }.bind(this), 500, moves[i+1]);
+            }
+        })
+    }
+
+    /**
+     * Check if it's a bot's turn and perform a bot move if it is.
+     */
+    componentDidUpdate() {
+        if (this.state.activePlayer === 'b' && !this.#isPieceChosen()) {
+            this.performBotMove();
+        }
+    }
+
     /**
      * Handles a square click.
      * If there is a move in progress tries to move chosen piece to the clicked position.
@@ -133,7 +199,7 @@ export default class Game extends React.Component {
      * @param {*} position - clicked position
      */
     handleSquareClick(position) {
-        if (this.#isMoveInProgress()
+        if (this.#isMoveInProgress() || this.state.activePlayer === 'b'
             || (!this.#choosePiece(position) && this.#isPieceChosen()))
             this.#movePiece(position);
     }

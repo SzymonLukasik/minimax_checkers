@@ -44,7 +44,7 @@ export default class Move {
         return this.game.getBoard().map(
             (row, i) => row.map((el, j) =>
                 (this.game.getChosenPiece().isEqual([i, j]) || Position.areEqual(capturedPiece, [i, j]))  
-                ? '-'
+                ? '.'
                 : newPos.isEqual([i, j])
                 ? this.game.getActivePlayer()
                 : el));
