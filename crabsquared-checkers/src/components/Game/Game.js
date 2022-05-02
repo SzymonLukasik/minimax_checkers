@@ -11,17 +11,17 @@ export default class Game extends React.Component {
         super(props);
         this.state = {
             board: [
-                ['c','-','c','-','c','-','c','-'],
-                ['-','c','-','c','-','c','-','c'],
-                ['c','-','c','-','c','-','c','-'],
-                ['-','-','-','-','-','-','-','-'],
-                ['-','-','-','-','-','-','-','-'],
+                ['b','-','b','-','b','-','b','-'],
                 ['-','b','-','b','-','b','-','b'],
                 ['b','-','b','-','b','-','b','-'],
-                ['-','b','-','b','-','b','-','b']
+                ['-','-','-','-','-','-','-','-'],
+                ['-','-','-','-','-','-','-','-'],
+                ['-','w','-','w','-','w','-','w'],
+                ['w','-','w','-','w','-','w','-'],
+                ['-','w','-','w','-','w','-','w']
             ],
             
-            activePlayer: 'b',
+            activePlayer: 'w',
 
             /** Position of a piece to be moved. */
             chosenPiece: null,
@@ -66,7 +66,7 @@ export default class Game extends React.Component {
      * Returns the opponent of the active player. 
      */
     getOpponent() {
-        return this.state.activePlayer === 'b' ? 'c' : 'b';
+        return this.state.activePlayer === 'w' ? 'b' : 'w';
     }
 
     /**

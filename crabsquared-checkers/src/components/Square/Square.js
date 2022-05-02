@@ -29,9 +29,9 @@ class Square extends React.Component {
                     onClick={() => this.props.onClick(this.props.position)}>
                 <div>
                     {
-                        (this.props.value === 'b')
+                        (this.props.value === 'w')
                         ? '🦀'
-                        : (this.props.value === 'c')
+                        : (this.props.value === 'b')
                         ? '🕷️' 
                         : ''
                     }
