@@ -172,15 +172,14 @@ export default class Game extends React.Component {
               'state': this.convertStateToSend()
             })
         }).then(response => response.json()).then(data => {
-            console.log(data.move);
             var moves = this.translateBotMove(data.move);
-            console.log(moves);
             
-            // perform each by choose and jump
+            /*
+             * Perform each move by choose and jump with 500ms delay between each move.
+             */
             for(var i = 0; i < moves.length - 1; i++) {
                 this.#choosePiece(moves[i]);
                 setTimeout(function(targetMove) {
-                    console.log(moves[i+1]);
                     this.bot_sound.play();
                     this.setState(this.move.jumpOn(targetMove));
                 }.bind(this), 500, moves[i+1]);
