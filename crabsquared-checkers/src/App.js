@@ -1,15 +1,15 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import './App.css';
 
 import Game from './components/Game/Game';
 import Title from './components/Title/Title';
 
 function App() {
-  /*
-  const [currentTime, setCurrentTime] = useState(0);
-
+  
+  // Test Request
   useEffect(() => {
-    fetch('/available_moves', {
+    fetch('/bot_move', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -26,9 +26,9 @@ function App() {
       })
     })
     .then(res => res.json())
-    .then(data => { setTestVar(data); });
+    .then(data => { console.log(data) });
   }, []);
-  */
+  
 
   return (
     <div className="App">
