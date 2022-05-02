@@ -41,6 +41,12 @@ export default class Game extends React.Component {
 
         /** Helps handle moves. */
         this.move = new Move(this);
+
+        this.click_sound = new Audio('/click.wav');
+
+        this.error_sound = new Audio('/error.wav');
+
+        this.bot_sound = new Audio('/bot_move.wav');
     }
 
     getBoard() {
@@ -175,6 +181,7 @@ export default class Game extends React.Component {
                 this.#choosePiece(moves[i]);
                 setTimeout(function(targetMove) {
                     console.log(moves[i+1]);
+                    this.bot_sound.play();
                     this.setState(this.move.jumpOn(targetMove));
                 }.bind(this), 500, moves[i+1]);
             }
@@ -199,9 +206,16 @@ export default class Game extends React.Component {
      * @param {*} position - clicked position
      */
     handleSquareClick(position) {
+        // play sound effect 
+        if (this.#choosePiece(position)) {
+            this.click_sound.play();
+        }
+
         if (this.#isMoveInProgress() || this.state.activePlayer === 'b'
-            || (!this.#choosePiece(position) && this.#isPieceChosen()))
+            || (!this.#choosePiece(position) && this.#isPieceChosen())){
+            this.click_sound.play();
             this.#movePiece(position);
+        } 
     }
 
     /**
