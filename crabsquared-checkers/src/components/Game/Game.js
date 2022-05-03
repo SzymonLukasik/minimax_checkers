@@ -172,17 +172,15 @@ export default class Game extends React.Component {
               'state': this.convertStateToSend()
             })
         }).then(response => response.json()).then(data => {
-            var moves = this.translateBotMove(data.move);
+            var move = this.translateBotMove(data.move);
             
-            /*
-             * Perform each move by choose and jump with 500ms delay between each move.
-             */
-            for(var i = 0; i < moves.length - 1; i++) {
-                this.#choosePiece(moves[i]);
+             // Choose a piece and jump with 500ms delay between each jump.
+            this.#choosePiece(move[0]);
+            for(var i = 1; i < move.length; i++) {
                 setTimeout(function(targetMove) {
                     this.bot_sound.play();
                     this.setState(this.move.jumpOn(targetMove));
-                }.bind(this), 500, moves[i+1]);
+                }.bind(this), 500, move[i]);
             }
         })
     }
@@ -205,16 +203,20 @@ export default class Game extends React.Component {
      * @param {*} position - clicked position
      */
     handleSquareClick(position) {
-        // play sound effect 
-        if (this.#choosePiece(position)) {
-            this.click_sound.play();
-        }
+        if (this.state.activePlayer === 'w') {
 
-        if (this.#isMoveInProgress() || this.state.activePlayer === 'b'
-            || (!this.#choosePiece(position) && this.#isPieceChosen())){
-            this.click_sound.play();
-            this.#movePiece(position);
-        } 
+            // choose a piece
+            if (this.#choosePiece(position)) {
+                this.click_sound.play();
+            }
+
+            // continue or start a move
+            if (this.#isMoveInProgress()
+                || (!this.#choosePiece(position) && this.#isPieceChosen())) {
+                this.click_sound.play();
+                this.#movePiece(position);
+            }
+        }
     }
 
     /**
