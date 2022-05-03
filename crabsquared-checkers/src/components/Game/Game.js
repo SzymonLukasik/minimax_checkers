@@ -5,20 +5,21 @@ import './Game.css';
 import Board from '../Board/Board';
 import InfoPanel from '../InfoPanel/InfoPanel';
 import Move from './Move';
+import { Position } from './Position';
 
 export default class Game extends React.Component {
     constructor(props){
         super(props);
         this.state = {
             board: [
-                ['b','-','b','-','b','-','b','-'],
-                ['-','b','-','b','-','b','-','b'],
-                ['b','-','b','-','b','-','b','-'],
-                ['-','-','-','-','-','-','-','-'],
-                ['-','-','-','-','-','-','-','-'],
-                ['-','w','-','w','-','w','-','w'],
-                ['w','-','w','-','w','-','w','-'],
-                ['-','w','-','w','-','w','-','w']
+                ['b','.','b','.','b','.','b','.'],
+                ['.','b','.','b','.','b','.','b'],
+                ['b','.','b','.','b','.','b','.'],
+                ['.','.','.','.','.','.','.','.'],
+                ['.','.','.','.','.','.','.','.'],
+                ['.','w','.','w','.','w','.','w'],
+                ['w','.','w','.','w','.','w','.'],
+                ['.','w','.','w','.','w','.','w']
             ],
             
             activePlayer: 'w',
@@ -40,6 +41,12 @@ export default class Game extends React.Component {
 
         /** Helps handle moves. */
         this.move = new Move(this);
+
+        this.click_sound = new Audio('/click.wav');
+
+        this.error_sound = new Audio('/error.wav');
+
+        this.bot_sound = new Audio('/bot_move.wav');
     }
 
     getBoard() {
@@ -124,6 +131,69 @@ export default class Game extends React.Component {
         }
     }
 
+
+    /**
+     * Convert received two letter e.g. 'B3' string to Position (1, 2)
+     * @param {*} positionString - string of form 'B3'
+     * @returns Position
+     */
+    convertStringToPosition(string) {
+        return new Position(string.charCodeAt(1) - 49, string.charCodeAt(0) - 65);
+    }
+
+    /**
+     * Translate bot move to Position list
+     * @param {*} receivedMove - bot move in form of array of strings 
+     * @returns Position list
+     */
+    translateBotMove(receivedMove) {
+        return receivedMove.map(move => this.convertStringToPosition(move));
+    }
+
+
+    /**
+     * Converts state.board to array of strings supported by API (swaps 'b' and 'w' characters).
+     */
+    convertStateToSend() {
+        const boardToSend = this.state.board.map(row =>
+            row.map(piece => piece === 'b' ? 'w' : (piece === 'w' ? 'b' : piece)));
+        return boardToSend;
+    }
+
+    /**
+     * Fetches a bot move from the server and performs it.
+     */
+    performBotMove = async () => {
+        fetch('/bot_move', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              'type': 'board',
+              'state': this.convertStateToSend()
+            })
+        }).then(response => response.json()).then(data => {
+            var move = this.translateBotMove(data.move);
+            
+             // Choose a piece and jump with 500ms delay between each jump.
+            this.#choosePiece(move[0]);
+            for(var i = 1; i < move.length; i++) {
+                setTimeout(function(targetMove) {
+                    this.bot_sound.play();
+                    this.setState(this.move.jumpOn(targetMove));
+                }.bind(this), 500, move[i]);
+            }
+        })
+    }
+
+    /**
+     * Check if it's a bot's turn and perform a bot move if it is.
+     */
+    componentDidUpdate() {
+        if (this.state.activePlayer === 'b' && !this.#isPieceChosen()) {
+            this.performBotMove();
+        }
+    }
+
     /**
      * Handles a square click.
      * If there is a move in progress tries to move chosen piece to the clicked position.
@@ -133,9 +203,20 @@ export default class Game extends React.Component {
      * @param {*} position - clicked position
      */
     handleSquareClick(position) {
-        if (this.#isMoveInProgress()
-            || (!this.#choosePiece(position) && this.#isPieceChosen()))
-            this.#movePiece(position);
+        if (this.state.activePlayer === 'w') {
+
+            // choose a piece
+            if (this.#choosePiece(position)) {
+                this.click_sound.play();
+            }
+
+            // continue or start a move
+            if (this.#isMoveInProgress()
+                || (!this.#choosePiece(position) && this.#isPieceChosen())) {
+                this.click_sound.play();
+                this.#movePiece(position);
+            }
+        }
     }
 
     /**

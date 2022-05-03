@@ -25,7 +25,7 @@ export class PathsLoader {
             return this.game.getBoard()
                 .slice(b, e)[0]
                 .flatMap((el, j) => 
-                    el === '-' && Math.abs(y - j) === 1
+                    el === '.' && Math.abs(y - j) === 1
                     ? [[[b, j]]]
                     : []);
         }
@@ -48,7 +48,7 @@ export class PathsLoader {
             return board
                 .slice(b, e)[0]
                 .flatMap((el, j) => 
-                    (el === '-' && Math.abs(y - j) === 2
+                    (el === '.' && Math.abs(y - j) === 2
                     && board.atPosition(Position.middle([b, j], [x, y])) === opponent)
                     ? [[b, j]]
                     : []);
