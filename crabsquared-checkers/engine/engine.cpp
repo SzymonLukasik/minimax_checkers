@@ -315,3 +315,50 @@ void remove_non_capture_moves(board_moves_t &board_moves)
         }
     }
 }
+
+/*
+    Returns a vector of captured pieces.
+*/
+std::vector<square_t> get_captured_pieces(move_t move)
+{
+    if (!is_capture_move(move))
+        return {};
+    
+    static auto get_middle_pos = [] (pos_t a, pos_t b) -> pos_t { return (a + b) / 2; };
+    std::vector<square_t> ret;
+    for (auto curr = move.begin(), next = std::next(move.begin());
+         next != move.end();
+         curr++, next++)
+    {
+        square_t captured = {
+            get_middle_pos(curr->first, next->first), 
+            get_middle_pos(curr->second, next->second)
+        };
+        ret.push_back(captured);
+    }
+
+    return ret;
+}
+
+void make_move(board_t &board, const move_t &move)
+{
+    std::vector<square_t> positions_to_clear = get_captured_pieces(move);
+    positions_to_clear.push_back(*move.begin());
+
+    square_t start_square = *move.begin();
+    square_t end_square = *(std::prev(move.end()));
+    piece_t moved_piece = board[start_square.first][start_square.second];
+    
+    for (square_t sq : positions_to_clear)
+    {
+        board[sq.first][sq.second] = piece_t::NP;            
+    }
+    board[end_square.first][end_square.second] = moved_piece;
+}
+
+board_t get_board_after_move(const board_t &board, const move_t &move)
+{
+    board_t ret = board;
+    make_move(ret, move);
+    return ret;
+}
