@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.17)
 project(crabsquared-checkers)
 
 include_directories(../..)
+include_directories(..)
 
 add_custom_target(check_valid_moves COMMAND ${CMAKE_CTEST_COMMAND}
     --force-new-ctest-process

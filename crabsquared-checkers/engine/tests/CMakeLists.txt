@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.1)
 project(crabsquared-checkers)
 
+include_directories(../)
+
 macro(addTest name)
     add_executable(${name} test_driver.cpp ${name}.cpp)
     target_link_libraries(${name} engine)
