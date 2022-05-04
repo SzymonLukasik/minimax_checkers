@@ -14,6 +14,7 @@ export default class Move {
         return {
             ...this.game.state,
             chosenPiece: position,
+            chosenPieceColor: this.game.getBoard()[position.x][position.y],
             availablePaths: this.pathsLoader.getAvailablePaths(position)
         };
     }
@@ -34,6 +35,20 @@ export default class Move {
     }
 
     /**
+     * Returns piece on a new position and transforms to king if needed
+     * @param {*} newPos - new position of a chosen piece
+     */
+    #checkIfKing(newPos) {
+        if(this.game.getChosenPieceColor() === 'w' && newPos.x === 0) {
+            return 'W';
+        }
+        if(this.game.getChosenPieceColor() === 'b' && newPos.x === 7) {
+            return 'B';
+        }
+        return this.game.getChosenPieceColor();
+    }
+
+    /**
      * Returns the state of the board after jump of chosen piece on newPos.
      * @param {*} newPos - new position of a chosen piece
      */
@@ -46,7 +61,7 @@ export default class Move {
                 (this.game.getChosenPiece().isEqual([i, j]) || Position.areEqual(capturedPiece, [i, j]))  
                 ? '.'
                 : newPos.isEqual([i, j])
-                ? this.game.getActivePlayer()
+                ? this.#checkIfKing(newPos)
                 : el));
     }
 
