@@ -19,3 +19,4 @@ cdef extern from "../engine.h":
     ctypedef map[square_t, square_moves_t] board_moves_t
     
     board_moves_t valid_moves(board_t& board, piece_color_t color)
+    board_t get_board_after_move(const board_t& board, const move_t& move)
