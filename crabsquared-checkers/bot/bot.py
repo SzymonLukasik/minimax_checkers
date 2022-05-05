@@ -3,12 +3,6 @@ from ..engine.python import engine
 
 MINIMAX_DEPTH = 9
 
-# def get_move(board):
-#     valid_moves = engine.valid_moves(board, 1)
-#     move_start_pos = next(iter(valid_moves))
-#     move = valid_moves[move_start_pos][0]
-#     return move
-
 def reward(board, color):
   pawn_val = 1
   king_val = 10
@@ -20,7 +14,6 @@ def reward(board, color):
   return blacks - whites if color == 1 else whites - blacks
 
 def minimax(board, depth, alpha, beta, color):
-  print('minimax')
   moves = engine.valid_moves(board, color)
   if depth == 0 or not moves:
     return None, reward(board, color)
@@ -46,7 +39,6 @@ def minimax(board, depth, alpha, beta, color):
     if beta <= alpha:
         break
   assert best_move is not None
-  print('minimax')
   return best_move, best_reward
 
 def get_move(board):
