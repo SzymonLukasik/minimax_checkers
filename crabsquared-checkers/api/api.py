@@ -101,7 +101,9 @@ def test():
             ['.','.','.','.','.','.','.'],
             ['.','.','.','.','.','.','.'],
             ['.','.','.','.','.','.','.'],
-        ]
+        ],
+        'bot_name': 'bot_first_possible',
+        'bot_parameters': {}
     })
     json_data = json.loads(response.data)
     assert json_data['type'] == 'bot_move'
