@@ -169,7 +169,9 @@ export default class Game extends React.Component {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               'type': 'board',
-              'state': this.convertStateToSend()
+              'state': this.convertStateToSend(),
+              'bot_name': 'bot_first_possible',
+              'bot_parameters': {}
             })
         }).then(response => response.json()).then(data => {
             var move = this.translateBotMove(data.move);

@@ -1,6 +1,6 @@
 from flask import request
 from ..app import app
-from ..bot.bot import get_move
+from ..bot.bot_manager import bot_manager
 from ..engine.python import engine
 
 @app.route('/')
@@ -22,7 +22,9 @@ def get_avaliable_moves():
 @app.route('/bot_move', methods=['POST'])
 def get_bot_move():
     board = request.json['state']
-    move = get_move(board)
+    name = request.json['bot_name']
+    parameters = request.json['bot_parameters']
+    move = bot_manager.get_move(name, board)
     return {
         'type': 'bot_move',
         'move': move
