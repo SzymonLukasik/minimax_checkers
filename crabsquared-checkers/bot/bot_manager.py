@@ -7,7 +7,6 @@ class bot_manager:
         bot_manager.bots[bot.get_name()] = bot
 
     def get_move(name, board, parameters = {}):
-        print(board)
         return bot_manager.bots[name].get_move(board, parameters)
 
 bot_manager.add_bot(bot_first_possible())
