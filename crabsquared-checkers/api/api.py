@@ -24,7 +24,7 @@ def get_bot_move():
     board = request.json['state']
     name = request.json['bot_name']
     parameters = request.json['bot_parameters']
-    move = bot_manager.get_move(name, board)
+    move = bot_manager.get_move(name, board, parameters)
     return {
         'type': 'bot_move',
         'move': move
