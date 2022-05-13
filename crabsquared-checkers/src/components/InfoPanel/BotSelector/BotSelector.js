@@ -6,7 +6,7 @@ const BotSelector = (props) => {
     return (
         <div className="bot-selector">
             <select onChange={(e) => props.handleBotChange(e)} >
-                <option value="bot_random">
+                <option value="bot_random" className="bot-easy">
                     Random Move (Easy)
                 </option>
                 <option value="bot_first_possible" className="bot-medium">
