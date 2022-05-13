@@ -170,7 +170,7 @@ export default class Game extends React.Component {
             body: JSON.stringify({
               'type': 'board',
               'state': this.convertStateToSend(),
-              'bot_name': 'bot_first_possible',
+              'bot_name': 'bot_random',
               'bot_parameters': {}
             })
         }).then(response => response.json()).then(data => {

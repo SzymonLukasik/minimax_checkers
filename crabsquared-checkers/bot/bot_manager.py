@@ -1,4 +1,5 @@
 from .bot_first_possible import bot_first_possible
+from .bot_random import bot_random
 
 class bot_manager:
     bots = {}
@@ -10,3 +11,4 @@ class bot_manager:
         return bot_manager.bots[name].get_move(board, parameters)
 
 bot_manager.add_bot(bot_first_possible())
+bot_manager.add_bot(bot_random())
