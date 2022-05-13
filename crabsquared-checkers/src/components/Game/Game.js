@@ -166,6 +166,7 @@ export default class Game extends React.Component {
      * Fetches a bot move from the server and performs it.
      */
     performBotMove = async () => {
+        // TODO: Add selecting bot type.
         fetch('/bot_move', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
