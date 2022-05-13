@@ -157,13 +157,30 @@ export default class Game extends React.Component {
         return receivedMove.map(move => this.convertStringToPosition(move));
     }
 
+    /** 
+     * Converts white piece to black and vice versa.
+     */
+    reversePiece(piece){
+        switch (piece) {
+            case 'w':
+                return 'b';
+            case 'b':
+                return 'w';
+            case 'W':
+                return 'B';
+            case 'B':
+                return 'W';
+            default:
+                return piece;
+        }
+    }
 
     /**
      * Converts state.board to array of strings supported by API (swaps 'b' and 'w' characters).
      */
     convertStateToSend() {
         const boardToSend = this.state.board.map(row =>
-            row.map(piece => piece === 'b' ? 'w' : (piece === 'w' ? 'b' : piece)));
+            row.map(piece => this.reversePiece(piece)));
         return boardToSend;
     }
 
