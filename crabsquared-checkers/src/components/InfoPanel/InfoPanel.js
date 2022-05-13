@@ -1,12 +1,10 @@
 import React from 'react';
 import './InfoPanel.scss';
+import BotSelector from './BotSelector/BotSelector'
 
-const InfoPanel = ({handleUndoClick, currentPlayer}) => {
+const InfoPanel = ({handleUndoClick, currentPlayer, handleBotChange}) => {
     return (
         <div className="info-panel">
-            <div className='info-item'>
-                MIM UW 2022
-            </div>
             <div className='info-item'>
                 Current Player:  
                 {
@@ -17,7 +15,10 @@ const InfoPanel = ({handleUndoClick, currentPlayer}) => {
             </div>
             <button className="undo-button"
                 onClick={handleUndoClick}>
-            </button>   
+            </button>
+            <div className='info-item'>
+                <BotSelector handleBotChange={handleBotChange}/>
+            </div>
         </div>
     );
 }

@@ -24,6 +24,8 @@ export default class Game extends React.Component {
             
             activePlayer: 'w',
 
+            chosenBot: 'bot_random',
+
             /** Position of a piece to be moved. */
             chosenPiece: null,
 
@@ -170,7 +172,7 @@ export default class Game extends React.Component {
             body: JSON.stringify({
               'type': 'board',
               'state': this.convertStateToSend(),
-              'bot_name': 'bot_random',
+              'bot_name': this.state.chosenBot,
               'bot_parameters': {}
             })
         }).then(response => response.json()).then(data => {
@@ -233,6 +235,13 @@ export default class Game extends React.Component {
         }
     }
 
+    /**
+     * Handles bot change by setting selected bot in state.
+     */
+    handleBotChange(selectedBot){
+        this.setState({chosenBot: selectedBot});
+    }
+
     renderBoard() {
         return (
             <Board board={this.state.board}
@@ -252,6 +261,7 @@ export default class Game extends React.Component {
                 <InfoPanel 
                     handleUndoClick={this.handleUndoClick}
                     currentPlayer={this.state.activePlayer}
+                    handleBotChange={(e) => this.handleBotChange(e.target.value)}
                 />
             </div>
         );
