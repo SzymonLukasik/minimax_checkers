@@ -78,6 +78,8 @@ export default class Move {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               'type': 'board',
+              'bot_name': this.game.state.chosenBot,
+              'bot_parameters': {},
               'state': this.convertStateToSend()
             })
         })
