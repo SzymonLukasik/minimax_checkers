@@ -79,6 +79,29 @@ export class Position {
     isPlayable() {
         return (this.x + this.y) % 2 === 0 ? true : false;
     }
+
+    /**
+     * Converts received pretty string e.g. 'B3' string to Position (2, 1)
+     * @param {*} positionString - string of form [column letter][row number]
+     * @returns Position of form (row index, column index)
+     */
+    static fromPrettyString(string) {
+        return new Position(
+            string.charCodeAt(1) - "1".charCodeAt(0), 
+            string.charCodeAt(0) - "A".charCodeAt(0));
+    }
+
+    /**
+     * Converts received position e.g. (2, 1) string to pretty string 'B3'
+     * @param {*} position - position of form (row index, column index)
+     * @returns string of form [column letter][row number]
+     */
+    toPrettyString() {
+        return String.fromCharCode(
+            this.y + "A".charCodeAt(0),
+            this.x + "1".charCodeAt(0)
+        );
+    }
 }
 
 /**

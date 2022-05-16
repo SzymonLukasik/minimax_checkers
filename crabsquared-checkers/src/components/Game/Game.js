@@ -5,7 +5,6 @@ import './Game.css';
 import Board from '../Board/Board';
 import InfoPanel from '../InfoPanel/InfoPanel';
 import Move from './Move';
-import { Position } from './Position';
 
 export default class Game extends React.Component {
     constructor(props){
@@ -131,58 +130,32 @@ export default class Game extends React.Component {
         }
     }
 
-
     /**
-     * Convert received two letter e.g. 'B3' string to Position (1, 2)
-     * @param {*} positionString - string of form 'B3'
-     * @returns Position
+     * Fetches a bot move from the server and executes it.
+     * After the last jump, it fetches available moves for the player.
      */
-    convertStringToPosition(string) {
-        return new Position(string.charCodeAt(1) - 49, string.charCodeAt(0) - 65);
-    }
+    executeBotMove() {
+        this.move.chooseBotPiece().then(state => {
+            // bot chooses a piece
+            this.setState(state);
 
-    /**
-     * Translate bot move to Position list
-     * @param {*} receivedMove - bot move in form of array of strings 
-     * @returns Position list
-     */
-    translateBotMove(receivedMove) {
-        return receivedMove.map(move => this.convertStringToPosition(move));
-    }
-
-
-    /**
-     * Converts state.board to array of strings supported by API (swaps 'b' and 'w' characters).
-     */
-    convertStateToSend() {
-        const boardToSend = this.state.board.map(row =>
-            row.map(piece => piece === 'b' ? 'w' : (piece === 'w' ? 'b' : piece)));
-        return boardToSend;
-    }
-
-    /**
-     * Fetches a bot move from the server and performs it.
-     */
-    performBotMove = async () => {
-        fetch('/bot_move', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              'type': 'board',
-              'state': this.convertStateToSend()
-            })
-        }).then(response => response.json()).then(data => {
-            var move = this.translateBotMove(data.move);
-            
-             // Choose a piece and jump with 500ms delay between each jump.
-            this.#choosePiece(move[0]);
-            for(var i = 1; i < move.length; i++) {
-                setTimeout(function(targetMove) {
+            // bot has only one available path
+            const botPath = this.state.availablePaths[0];
+            botPath.forEach((pos, index) => {
+                setTimeout(p => {
                     this.bot_sound.play();
-                    this.setState(this.move.jumpOn(targetMove));
-                }.bind(this), 500, move[i]);
-            }
-        })
+                    this.setState(
+                        this.move.jumpOn(p),
+                        // if it is the last jump and the setState finishes, 
+                        // fetch available moves
+                        () => {
+                            if (index === botPath.length - 1) 
+                                this.move.fetchAvailableMoves(); 
+                        }
+                    );
+                }, 500, pos);
+            });
+        });
     }
 
     /**
@@ -190,7 +163,7 @@ export default class Game extends React.Component {
      */
     componentDidUpdate() {
         if (this.state.activePlayer === 'b' && !this.#isPieceChosen()) {
-            this.performBotMove();
+            this.executeBotMove();
         }
     }
 

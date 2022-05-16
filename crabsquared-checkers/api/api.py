@@ -13,7 +13,7 @@ def api_base():
 @app.route('/available_moves', methods=['POST'])
 def get_avaliable_moves():
     board = request.json['state']
-    moves = engine.valid_moves(board, 1)
+    moves = engine.valid_moves(board, 0)
     return {
         'type': 'available_moves', 
         'available_moves': moves
