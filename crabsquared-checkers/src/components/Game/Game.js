@@ -105,7 +105,7 @@ export default class Game extends React.Component {
      * @returns whether a piece was choosen successfully
      */
     #choosePiece(position) {
-        if (this.state.board.atPosition(position) === this.state.activePlayer) {
+        if (this.state.board.atPosition(position).toLowerCase() === this.state.activePlayer) {
             this.setState(this.move.choosePiece(position));
             return true;
         }
