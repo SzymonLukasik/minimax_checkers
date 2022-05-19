@@ -1,6 +1,6 @@
 from flask import request
 from ..app import app
-from ..bot.bot import get_move
+from ..bot.bot_manager import bot_manager
 from ..engine.python import engine
 
 @app.route('/')
@@ -13,7 +13,7 @@ def api_base():
 @app.route('/available_moves', methods=['POST'])
 def get_avaliable_moves():
     board = request.json['state']
-    moves = engine.valid_moves(board, 1)
+    moves = engine.valid_moves(board, 0)
     return {
         'type': 'available_moves', 
         'available_moves': moves
@@ -22,7 +22,9 @@ def get_avaliable_moves():
 @app.route('/bot_move', methods=['POST'])
 def get_bot_move():
     board = request.json['state']
-    move = get_move(board)
+    name = request.json['bot_name']
+    parameters = request.json['bot_parameters']
+    move = bot_manager.get_move(name, board, parameters)
     return {
         'type': 'bot_move',
         'move': move
@@ -99,7 +101,9 @@ def test():
             ['.','.','.','.','.','.','.'],
             ['.','.','.','.','.','.','.'],
             ['.','.','.','.','.','.','.'],
-        ]
+        ],
+        'bot_name': 'bot_first_possible',
+        'bot_parameters': {}
     })
     json_data = json.loads(response.data)
     assert json_data['type'] == 'bot_move'
