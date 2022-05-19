@@ -139,76 +139,10 @@ export default class Game extends React.Component {
         }
     }
 
-<<<<<<< HEAD
-
-    /**
-     * Convert received two letter e.g. 'B3' string to Position (1, 2)
-     * @param {*} positionString - string of form 'B3'
-     * @returns Position
-     */
-    convertStringToPosition(string) {
-        return new Position(string.charCodeAt(1) - 49, string.charCodeAt(0) - 65);
-    }
-
-    /**
-     * Translate bot move to Position list
-     * @param {*} receivedMove - bot move in form of array of strings 
-     * @returns Position list
-     */
-    translateBotMove(receivedMove) {
-        return receivedMove.map(move => this.convertStringToPosition(move));
-    }
-
-    /** 
-     * Converts white piece to black and vice versa.
-     */
-    reversePiece(piece){
-        switch (piece) {
-            case 'w':
-                return 'b';
-            case 'b':
-                return 'w';
-            case 'W':
-                return 'B';
-            case 'B':
-                return 'W';
-            default:
-                return piece;
-        }
-    }
-
-=======
->>>>>>> master
     /**
      * Fetches a bot move from the server and executes it.
      * After the last jump, it fetches available moves for the player.
      */
-<<<<<<< HEAD
-    convertStateToSend() {
-        const boardToSend = this.state.board.map(row =>
-            row.map(piece => this.reversePiece(piece)));
-        return boardToSend;
-    }
-
-    /**
-     * Fetches a bot move from the server and performs it.
-     */
-    performBotMove = async () => {
-        fetch('/bot_move', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              'type': 'board',
-              'state': this.convertStateToSend()
-            })
-        }).then(response => response.json()).then(data => {
-            var move = this.translateBotMove(data.move);
-            
-             // Choose a piece and jump with 500ms delay between each jump.
-            this.#choosePiece(move[0]);
-            for(var i = 1; i < move.length; i++) {
-                setTimeout(function(targetMove) {
-=======
     executeBotMove() {
         this.move.chooseBotPiece().then(state => {
             // bot chooses a piece
@@ -218,7 +152,6 @@ export default class Game extends React.Component {
             const botPath = this.state.availablePaths[0];
             botPath.forEach((pos, index) => {
                 setTimeout(p => {
->>>>>>> master
                     this.bot_sound.play();
                     this.setState(
                         this.move.jumpOn(p),

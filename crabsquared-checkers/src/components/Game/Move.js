@@ -113,12 +113,7 @@ export default class Move {
         return {
             ...this.game.state,
             chosenPiece: position,
-<<<<<<< HEAD
-            chosenPieceColor: this.game.getBoard()[position.x][position.y],
-            availablePaths: this.pathsLoader.getAvailablePaths(position)
-=======
             availablePaths: this.getAvailablePaths(position),
->>>>>>> master
         };
     }
 
