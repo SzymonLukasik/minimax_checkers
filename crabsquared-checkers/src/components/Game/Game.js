@@ -99,6 +99,21 @@ export default class Game extends React.Component {
         return this.state.pathTravelled.length > 0;
     }
 
+    // If current player has no move - print winner
+    #handleEndGame() {
+        // flat board to check for white pieces
+        if (this.state.board.flat().filter(piece => piece === 'w' || piece === 'W').length === 0) {
+            alert("Black wins!");
+            return;
+        }
+        // flat board to check for black pieces
+        if (this.state.board.flat().filter(piece => piece === 'b' || piece === 'B').length === 0) {
+            alert("White wins!");
+            return;
+        }
+        return;
+    }
+
     /**
      * Handles a choose of a piece.
      * @param {*} position - clicked position
@@ -144,10 +159,12 @@ export default class Game extends React.Component {
      * After the last jump, it fetches available moves for the player.
      */
     executeBotMove() {
-        this.move.chooseBotPiece().then(state => {
+        return this.move.chooseBotPiece().then(state => {
             // bot chooses a piece
             this.setState(state);
-
+            
+            this.#handleEndGame();
+            
             // bot has only one available path
             const botPath = this.state.availablePaths[0];
             botPath.forEach((pos, index) => {
@@ -164,6 +181,8 @@ export default class Game extends React.Component {
                     );
                 }, 500, pos);
             });
+        }, () => {
+            this.#handleEndGame();
         });
     }
 
@@ -172,8 +191,10 @@ export default class Game extends React.Component {
      */
     componentDidUpdate() {
         if (this.state.activePlayer === 'b' && !this.#isPieceChosen()) {
-            this.executeBotMove();
-        }
+            this.executeBotMove().then(() => {
+                this.#handleEndGame();
+            });
+        }        
     }
 
     /**
