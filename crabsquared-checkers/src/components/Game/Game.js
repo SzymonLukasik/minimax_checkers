@@ -28,6 +28,9 @@ export default class Game extends React.Component {
             /** Position of a piece to be moved. */
             chosenPiece: null,
 
+            /** Chosen piece color */
+            chosenPieceColor: null,
+
             /** List of paths that describes possible moves for a chosen piece. */
             availablePaths: null,
 
@@ -60,6 +63,10 @@ export default class Game extends React.Component {
 
     getChosenPiece() {
         return this.state.chosenPiece;
+    }
+
+    getChosenPieceColor() {
+        return this.state.chosenPieceColor;
     }
 
     getAvailablePaths() {
@@ -98,7 +105,7 @@ export default class Game extends React.Component {
      * @returns whether a piece was choosen successfully
      */
     #choosePiece(position) {
-        if (this.state.board.atPosition(position) === this.state.activePlayer) {
+        if (this.state.board.atPosition(position).toLowerCase() === this.state.activePlayer) {
             this.setState(this.move.choosePiece(position));
             return true;
         }

@@ -9,8 +9,8 @@ const InfoPanel = ({handleUndoClick, currentPlayer, handleBotChange}) => {
                 Current Player:  
                 {
                     (currentPlayer === 'w')
-                    ? '🦀'
-                    : '🕷️'
+                    ? <img src="/bialy_pion.svg" alt='w' />
+                    : <img src="/czarny_pion.svg" alt='w' />
                 }
             </div>
             <button className="undo-button"

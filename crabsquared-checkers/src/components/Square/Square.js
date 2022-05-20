@@ -23,18 +23,31 @@ class Square extends React.Component {
         );
     }
 
+    renderPiece() {
+        return (
+            <div>
+                {
+                    (this.props.value === 'w')
+                    ? <img src="/bialy_pion.svg" alt='w' />
+                    : (this.props.value === 'b')
+                    ? <img src="/czarny_pion.svg" alt='b' />
+                    : (this.props.value === 'W')
+                    ? <img src="/bialy_krol.svg" alt='W' />
+                    : (this.props.value === 'B')
+                    ? <img src="/czarny_krol.svg" alt='B' />
+                    : ''
+                }
+            </div>
+            
+        );
+    }
+
     render() {
         return (
             <button className={this.#getClassName()} 
                     onClick={() => this.props.onClick(this.props.position)}>
                 <div>
-                    {
-                        (this.props.value === 'w')
-                        ? '🦀'
-                        : (this.props.value === 'b')
-                        ? '🕷️' 
-                        : ''
-                    }
+                    { this.renderPiece() }
                 </div>
 
             </button>

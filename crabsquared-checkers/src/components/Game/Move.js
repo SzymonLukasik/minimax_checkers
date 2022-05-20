@@ -17,13 +17,31 @@ export default class Move {
         this.game = game;
         this.fetchAvailableMoves();
     }
+    
+    /**
+     * Converts piece from white to black and vice versa
+     */
+    reversePiece(piece){
+        switch (piece) {
+            case 'w':
+                return 'b';
+            case 'b':
+                return 'w';
+            case 'W':
+                return 'B';
+            case 'B':
+                return 'W';
+            default:
+                return piece;
+        }
+    }
 
     /**
      * Converts state.board to array of strings supported by API (swaps 'b' and 'w' characters).
      */
      convertStateToSend() {
         const boardToSend = this.game.state.board.map(row =>
-            row.map(piece => piece === 'b' ? 'w' : (piece === 'w' ? 'b' : piece)));
+            row.map(piece => this.reversePiece(piece)));
         return boardToSend;
     }
 
@@ -90,6 +108,7 @@ export default class Move {
             return ({
                 ...this.game.state,
                 chosenPiece: start_pos,
+                chosenPieceColor: this.game.getBoard()[start_pos.x][start_pos.y],
                 availablePaths: [move_truncated]
             });
         });
@@ -113,6 +132,7 @@ export default class Move {
         return {
             ...this.game.state,
             chosenPiece: position,
+            chosenPieceColor: this.game.getBoard()[position.x][position.y],
             availablePaths: this.getAvailablePaths(position),
         };
     }
@@ -133,6 +153,20 @@ export default class Move {
     }
 
     /**
+     * Returns piece on a new position and transforms to king if needed
+     * @param {*} newPos - new position of a chosen piece
+     */
+    #checkIfKing(newPos) {
+        if(this.game.getChosenPieceColor() === 'w' && newPos.x === 0) {
+            return 'W';
+        }
+        if(this.game.getChosenPieceColor() === 'b' && newPos.x === 7) {
+            return 'B';
+        }
+        return this.game.getChosenPieceColor();
+    }
+
+    /**
      * Returns the state of the board after jump of chosen piece on newPos.
      * @param {*} newPos - new position of a chosen piece
      */
@@ -145,7 +179,7 @@ export default class Move {
                 (this.game.getChosenPiece().isEqual([i, j]) || Position.areEqual(capturedPiece, [i, j]))  
                 ? '.'
                 : newPos.isEqual([i, j])
-                ? this.game.getActivePlayer()
+                ? this.#checkIfKing(newPos)
                 : el));
     }
 
