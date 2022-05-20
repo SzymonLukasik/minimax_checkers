@@ -15,7 +15,6 @@ def reward(board, color):
   return blacks - whites if color == 1 else whites - blacks
 
 def minimax(board, depth, alpha, beta, color):
-  print('minimax')
   moves = engine.valid_moves(board, color)
   if depth == 0 or not moves:
     return None, reward(board, color)
@@ -41,7 +40,6 @@ def minimax(board, depth, alpha, beta, color):
     if beta <= alpha:
         break
   assert best_move is not None
-  print('minimax')
   return best_move, best_reward
 
 
