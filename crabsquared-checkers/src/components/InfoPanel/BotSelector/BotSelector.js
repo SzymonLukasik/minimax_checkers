@@ -15,6 +15,10 @@ const BotSelector = (props) => {
                 <option value="bot_minimax" className="bot-hard">
                     Minimax (Hard) 
                 </option>
+                <option value="bot_minimax_hard" className="bot-hard">
+                    Minimax hard (Very Hard)
+                </option>
+
             </select>
         </div>
     );

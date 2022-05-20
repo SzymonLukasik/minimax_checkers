@@ -1,6 +1,6 @@
 from .bot_first_possible import bot_first_possible
 from .bot_random import bot_random
-from .bot_minimax import bot_minimax
+from .bot_minimax import bot_minimax, bot_minimax_hard
 
 class bot_manager:
     bots = {}
@@ -14,3 +14,4 @@ class bot_manager:
 bot_manager.add_bot(bot_first_possible())
 bot_manager.add_bot(bot_random())
 bot_manager.add_bot(bot_minimax())
+bot_manager.add_bot(bot_minimax_hard())

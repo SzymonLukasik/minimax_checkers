@@ -2,7 +2,8 @@ import math
 from ..engine.python import engine
 from .bot_abstract import bot_abstract
 
-MINIMAX_DEPTH = 9
+EASY_SEARCH_DEPTH = 4
+HARD_SEARCH_DEPTH = 9
 
 def reward(board, color):
   pawn_val = 1
@@ -49,6 +50,15 @@ class bot_minimax(bot_abstract):
 
     def get_move(self, board, parameters = {}):
       alpha, beta = -math.inf, math.inf
-      move, _ = minimax(board, MINIMAX_DEPTH, alpha, beta, 1)
+      move, _ = minimax(board, EASY_SEARCH_DEPTH, alpha, beta, 1)
       return move
 
+
+class bot_minimax_hard(bot_abstract):
+    def get_name(self):
+        return 'bot_minimax_hard'
+
+    def get_move(self, board, parameters = {}):
+      alpha, beta = -math.inf, math.inf
+      move, _ = minimax(board, HARD_SEARCH_DEPTH, alpha, beta, 1)
+      return move
