@@ -1,3 +1,6 @@
+.venv
+__pycache__
+
 react-flask-app/api/venv
 react-flask-app/api/__pycache__
 
