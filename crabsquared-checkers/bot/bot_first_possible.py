@@ -1,4 +1,7 @@
-from ..engine.python import engine
+import os
+print (os.getcwd())
+
+from engine.python import engine
 from .bot_abstract import bot_abstract
 
 class bot_first_possible(bot_abstract):

@@ -1,4 +1,4 @@
-from ..engine.python import engine
+from engine.python import engine
 from .bot_abstract import bot_abstract
 import random
 
