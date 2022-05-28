@@ -14,6 +14,9 @@
 cd crabsquared-checkers
 sudo docker build -t test . && sudo docker run -it -p 8000:8000 test
 
+spushuj do heroku brancha deploy:
+git push heroku deploy:master
+
 
 ### API Endpoints
 
