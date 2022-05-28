@@ -1,0 +1,21 @@
+FROM node:16
+ARG path=~/crabsquared-checkers
+
+RUN mkdir -p $path
+WORKDIR $path
+
+RUN apt-get update && apt-get install -y python3
+
+RUN npm install yarn
+
+RUN apt-get install -y python3-pip
+RUN python3 -m pip install flask python-dotenv Cython
+
+RUN apt-get install -y cmake
+COPY . ~/crabsquared-checkers
+WORKDIR ~/crabsquared-checkers
+RUN yarn compile
+RUN npm install npm-run-all
+
+ENV PORT=8000
+ENTRYPOINT ["npm", "start"]

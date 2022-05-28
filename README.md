@@ -10,6 +10,10 @@
 4. Run `yarn compile`to compile engine.
 5. Start an app by going to `crabsquared-checkers` and running `npm start`. 
 
+### How to run from docker?
+cd crabsquared-checkers
+sudo docker build -t test . && sudo docker run -it -p 8000:8000 test
+
 
 ### API Endpoints
 

@@ -1,0 +1,8 @@
+__pycache__
+.venv
+venv
+node_modules
+engine/build
+engine/cmake-build-debug
+engine/python/build
+*.so
