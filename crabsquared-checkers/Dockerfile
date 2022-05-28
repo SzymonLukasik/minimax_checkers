@@ -18,4 +18,5 @@ RUN yarn compile
 RUN npm install npm-run-all
 
 ENV PORT=8000
+EXPOSE 5000
 ENTRYPOINT ["npm", "start"]
