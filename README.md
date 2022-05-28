@@ -12,7 +12,7 @@
 
 ### How to run from docker?
 cd crabsquared-checkers
-sudo docker build -t test . && sudo docker run -it -p 8000:8000 test
+sudo docker build -t test . && sudo docker run -it -ePORT=8000 -p 8000:8000 test
 
 spushuj do heroku brancha deploy:
 git push heroku deploy:master
