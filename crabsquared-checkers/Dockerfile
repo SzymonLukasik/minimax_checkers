@@ -17,6 +17,7 @@ WORKDIR ~/crabsquared-checkers
 RUN yarn compile
 RUN npm install npm-run-all
 
-ENV PORT=8000
+# TO HEROKU USTAWI!! powinnismy wykrywac nieustawienie portu w node
+# ENV PORT=8000
 EXPOSE 5000
 ENTRYPOINT ["npm", "start"]
