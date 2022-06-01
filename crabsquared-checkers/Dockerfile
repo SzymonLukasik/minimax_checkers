@@ -17,4 +17,4 @@ WORKDIR ~/crabsquared-checkers
 RUN yarn compile
 #RUN npm install npm-run-all
 
-ENTRYPOINT ["npm", "start-api"]
+ENTRYPOINT ["npm", "run", "start-api"]
