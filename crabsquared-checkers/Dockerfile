@@ -15,6 +15,6 @@ RUN apt-get install -y cmake
 COPY . ~/crabsquared-checkers
 WORKDIR ~/crabsquared-checkers
 RUN yarn compile
-RUN npm install npm-run-all
+#RUN npm install npm-run-all
 
-ENTRYPOINT ["npm", "start"]
+ENTRYPOINT ["npm", "start-api"]

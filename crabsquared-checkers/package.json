@@ -17,7 +17,7 @@
   "scripts": {
     "compile": "sh compile.sh",
     "start-react": "react-scripts start",
-    "start-api": "flask run --no-debugger --host=0.0.0.0",
+    "start-api": "flask run --no-debugger --host=0.0.0.0 -p $PORT && echo 1 ",
     "start": "npm-run-all -p -r start-react start-api && echo 1  ",
     "build": "react-scripts build",
     "test": "react-scripts test",
