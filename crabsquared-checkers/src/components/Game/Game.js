@@ -35,7 +35,9 @@ export default class Game extends React.Component {
             availablePaths: null,
 
             /** Path of squares travelled by currently chosenPiece */
-            pathTravelled: []
+            pathTravelled: [],
+
+            availableStarts: [],
         }
         this.handleSquareClick = this.handleSquareClick.bind(this);
         this.handleUndoClick = this.handleUndoClick.bind(this);
@@ -45,6 +47,15 @@ export default class Game extends React.Component {
 
         /** Helps handle moves. */
         this.move = new Move(this);
+        
+        this.move.fetchAvailableMoves().then(
+            availableStarts => {
+                this.setState({
+                ...this.state,
+                availableStarts: availableStarts
+            });
+        }
+        );
 
         this.click_sound = new Audio('/click.wav');
 
@@ -58,6 +69,10 @@ export default class Game extends React.Component {
     }
 
     getActivePlayer() {
+        this.setState({
+            ...this.state,
+            availableStarts: [],
+        });
         return this.state.activePlayer;
     }
 
@@ -176,7 +191,14 @@ export default class Game extends React.Component {
                         // fetch available moves
                         () => {
                             if (index === botPath.length - 1) 
-                                this.move.fetchAvailableMoves(); 
+                                this.move.fetchAvailableMoves().then(
+                                    availableStarts => {
+                                        this.setState({
+                                        ...this.state,
+                                        availableStarts: availableStarts
+                                    });
+                                }
+                                );
                         }
                     );
                 }, 500, pos);
@@ -247,7 +269,8 @@ export default class Game extends React.Component {
                    handleClick={this.handleSquareClick}
                    chosenPiece={this.state.chosenPiece}
                    availableSquares={this.getAvailableSquares()}
-                   pathTravelled={this.state.pathTravelled}/>
+                   pathTravelled={this.state.pathTravelled}
+                   availableStarts={this.state.availableStarts}/>
         );
     }
 

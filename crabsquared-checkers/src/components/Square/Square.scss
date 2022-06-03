@@ -14,7 +14,12 @@
 
 .square-playable {
     @extend .square;
-    background: rgb(231, 198, 203);
+    background: rgb(237, 214, 218);
+}
+
+.square-start {
+    @extend .square;
+    background: rgb(237, 156, 168);
 }
 
 .square-idle {

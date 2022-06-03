@@ -9,6 +9,8 @@ class Square extends React.Component {
             ? (
                 (this.props.chosen === true)
                 ? 'square-chosen'
+                : (this.props.availableStart === true)
+                ? 'square-start'
                 : (
                     (this.props.available === true)
                     ? 'square-available'

@@ -15,6 +15,7 @@ class Board extends React.Component {
                            available={this.props.availableSquares.some((pos) =>  Position.areEqual(pos, [i, j]))}
                            onClick={this.props.handleClick}
                            travelled={this.props.pathTravelled.some((pos) => Position.areEqual(pos, [i, j]))}
+                           availableStart={this.props.availableStarts.some((pos) => Position.areEqual(pos, [i, j]))}
                            key={j}/>
                 ))}
             </div>

@@ -15,7 +15,6 @@ export default class Move {
 
     constructor(game) {
         this.game = game;
-        this.fetchAvailableMoves();
     }
     
     /**
@@ -73,7 +72,7 @@ export default class Move {
      * Fetches available moves from the API, converts it and saves as the property.
      */
     async fetchAvailableMoves() {
-        fetch('/available_moves', {
+        return fetch('/available_moves', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -83,7 +82,8 @@ export default class Move {
         })
         .then(response => response.json())
         .then(data => this.convertAPIAvailableMoves(data.available_moves))
-        .then(moves => { this.availableMoves = moves; });
+        .then(moves => { this.availableMoves = moves; })
+        .then(() => Object.keys(this.availableMoves).map(pos => Position.fromPrettyString(pos)));
     }
 
     /**
